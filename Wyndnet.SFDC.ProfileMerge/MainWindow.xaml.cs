@@ -23,6 +23,7 @@ namespace Wyndnet.SFDC.ProfileMerge
     public partial class MainWindow : Window
     {
         XMLHandler xmlHandler = new XMLHandler();
+        DiffStore diffStore = new DiffStore();
 
         public MainWindow()
         {
@@ -41,12 +42,14 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            xmlHandler.Analyze();
+            
+            xmlHandler.Analyze(diffStore);
         }
     }
 
     class XMLHandler
     {
+        DiffStore diffStore;
         XDocument doc;
         XDocument doc2;
 
@@ -66,16 +69,71 @@ namespace Wyndnet.SFDC.ProfileMerge
             }          
         }
 
-        public void Analyze()
+        public void Analyze(DiffStore diffStore)
         {
-            List<string> values = new List<string>();
+            this.diffStore = diffStore;
 
-            foreach (var xyz in doc.Root.Elements())
+            //FIXME: Temp handler for null results
+            if (doc == null || doc2 == null)
+                return;
+
+            XNamespace ns = "http://soap.sforce.com/2006/04/metadata";
+            
+            foreach (var element in doc.Root.Elements())
             {
-                values.Add(xyz.Name.LocalName.ToString());
-            }
+                XElement searchResult;
 
-            var distinct = values.Distinct();
+                //TODO
+                // Get element type
+                string localName = element.Name.LocalName;
+                // Figure out sub element name to look for - doesn't seem to work 'application'
+
+                if(localName == "applicationVisibilities")
+                {
+                    string searchTerm = null;
+                    foreach(var subelement in element.Elements())
+                    {
+                        if (subelement.Name.LocalName == "application")
+                            searchTerm = subelement.Value;
+                    }
+
+                    var target =
+                        from el in doc2.Root.Elements(ns + localName)
+                        where (string)el.Element(ns + "application") == searchTerm
+                        select el;
+
+                    foreach(XElement el in target)
+                    {
+                        string t = el.Name.LocalName;
+                    }
+
+                    // Check that we have unique return
+                    if (target.Count() == 1)
+                    { 
+                        searchResult = target.Single();
+
+                        //FIXME: very rough comparison
+                        if (element.Value != searchResult.Value)
+                            diffStore.Add(element, searchResult);
+                    }
+                    
+                }
+            }
         }
     }
 }
+
+/*
+ * applicationVisibilities
+ * classAccesses
+ * custom
+ * fieldPermissions
+ * layoutAssignments
+ * loginIpRanges
+ * objectPermissions
+ * pageAccesses
+ * recordTypeVisibilities
+ * tabVisibilities
+ * userLicense
+ * userPermissions
+*/
