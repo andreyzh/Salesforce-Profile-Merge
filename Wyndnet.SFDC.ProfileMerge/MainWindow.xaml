@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wyndnet.SFDC.ProfileMerge"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="SFDC Profile Merge Tool" Height="350" Width="525">
     <Grid>
-        
+        <Button Content="Load XML 1" HorizontalAlignment="Left" Margin="432,10,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Load XML 2" HorizontalAlignment="Left" Margin="432,35,0,0" VerticalAlignment="Top" Width="75"/>
+
     </Grid>
 </Window>
