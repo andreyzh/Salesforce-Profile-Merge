@@ -7,8 +7,10 @@
         mc:Ignorable="d"
         Title="SFDC Profile Merge Tool" Height="350" Width="525">
     <Grid>
-        <Button Content="Load XML 1" HorizontalAlignment="Left" Margin="432,10,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button Content="Load XML 2" HorizontalAlignment="Left" Margin="432,35,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Load XML 1" HorizontalAlignment="Left" Margin="432,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button Content="Load XML 2" HorizontalAlignment="Left" Margin="432,35,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Analyze" HorizontalAlignment="Left" Margin="432,60,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
 
     </Grid>
 </Window>
