@@ -17,9 +17,12 @@ namespace Wyndnet.SFDC.ProfileMerge
         // Add differing element
         public void Add(XElement originElement, XElement targetElement)
         {
-            Diff diff = new Diff();
-            diff.OriginElement = originElement;
-            diff.TargetElement = targetElement;
+            Diff diff = new Diff()
+            {
+                Type = originElement.Name.LocalName.ToString(),
+                OriginElement = originElement,
+                TargetElement = targetElement
+            };
             diffs.Add(diff);
         }
 

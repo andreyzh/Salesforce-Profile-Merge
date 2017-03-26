@@ -22,12 +22,14 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     public partial class MainWindow : Window
     {
+        //Dictionary<string, string> componentDefinitions;
         XMLHandler xmlHandler = new XMLHandler();
         DiffStore diffStore = new DiffStore();
 
         public MainWindow()
         {
             InitializeComponent();
+            xmlHandler.componentDefinitions = Config.LoadComponentDefinitions();
         }
 
         //TEMP: Click handler to load initial XML file
@@ -49,6 +51,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
     class XMLHandler
     {
+        public Dictionary<string, string> componentDefinitions { get; set; }
         DiffStore diffStore;
         XDocument doc;
         XDocument doc2;
@@ -120,20 +123,33 @@ namespace Wyndnet.SFDC.ProfileMerge
                 }
             }
         }
+
+        private void GetApplicationTypes()
+        {
+            List<string> values = new List<string>();
+
+            foreach(var type in doc.Root.Elements())
+            {
+                values.Add(type.Name.LocalName.ToString());
+            }
+
+            var valuesDistinct = values.Distinct();
+        }
+
     }
 }
 
 /*
- * applicationVisibilities
- * classAccesses
+ * applicationVisibilities -- application
+ * classAccesses -- apexClass
  * custom
- * fieldPermissions
- * layoutAssignments
- * loginIpRanges
- * objectPermissions
- * pageAccesses
- * recordTypeVisibilities
- * tabVisibilities
- * userLicense
- * userPermissions
+ * fieldPermissions -- field
+ * layoutAssignments -- layout
+ * loginIpRanges -- ?
+ * objectPermissions -- object
+ * pageAccesses -- apexPage
+ * recordTypeVisibilities -- recordType
+ * tabVisibilities -- tab
+ * userLicense -- ?
+ * userPermissions -- name
 */
