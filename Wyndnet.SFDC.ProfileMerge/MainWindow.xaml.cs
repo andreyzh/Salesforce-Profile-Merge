@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,14 +23,14 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     public partial class MainWindow : Window
     {
-        //Dictionary<string, string> componentDefinitions;
         XMLHandler xmlHandler = new XMLHandler();
         DiffStore diffStore = new DiffStore();
-
+        
         public MainWindow()
         {
             InitializeComponent();
             xmlHandler.ComponentDefinitions = Config.LoadComponentDefinitions();
+            DataContext = diffStore.Diffs;
         }
 
         //TEMP: Click handler to load initial XML file
@@ -44,8 +45,8 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            
             xmlHandler.Analyze(diffStore);
+            dataGrid.ItemsSource = diffStore.Diffs;
         }
     }
 

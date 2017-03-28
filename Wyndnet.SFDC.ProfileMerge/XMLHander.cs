@@ -80,7 +80,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                             //FIXME: very rough comparison
                             if (element.Value != searchResult.Value)
-                                diffStore.Add(element, searchResult);
+                                diffStore.Add(element, searchResult, DiffStore.Kind.Changed);
                         }
                     }
                 }

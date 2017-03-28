@@ -5,12 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wyndnet.SFDC.ProfileMerge"
         mc:Ignorable="d"
-        Title="SFDC Profile Merge Tool" Height="350" Width="525">
+        Title="SFDC Profile Merge Tool" Height="1600" Width="900">
     <Grid>
-        <Button Content="Load XML 1" HorizontalAlignment="Left" Margin="432,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <Button Content="Load XML 2" HorizontalAlignment="Left" Margin="432,35,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Analyze" HorizontalAlignment="Left" Margin="432,60,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+        <Button Content="Load XML 1" Margin="807,20,10,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button Content="Load XML 2" Margin="807,45,10,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button Content="Analyze" Margin="807,70,10,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="449" Margin="10,10,0,0" VerticalAlignment="Top" Width="200px">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Change type" Binding="{Binding Type}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </Window>
