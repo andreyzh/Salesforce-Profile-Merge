@@ -11,10 +11,11 @@ namespace Wyndnet.SFDC.ProfileMerge
 {
     static class Config
     {
+        public static Dictionary<string, string> ComponentDefinitions { get { return componentDefinitions; } }
+        static Dictionary<string, string> componentDefinitions = new Dictionary<string, string>();
+
         public static Dictionary<string, string> LoadComponentDefinitions()
         {
-            Dictionary<string, string> componentDefinitions = new Dictionary<string, string>();
-
             try
             { 
                 XDocument doc = XDocument.Load("components.xml");

@@ -37,7 +37,6 @@ namespace Wyndnet.SFDC.ProfileMerge
             if (doc == null || doc2 == null)
                 return;
 
-            // TODO: Fetch dynamically
             XNamespace ns = doc.Root.GetDefaultNamespace();
 
             // Outer loop: Go though all elements in the file
@@ -48,10 +47,8 @@ namespace Wyndnet.SFDC.ProfileMerge
                 {
                     XElement searchResult;
 
-                    //TODO
                     // Get element type
                     string localName = element.Name.LocalName;
-                    // Figure out sub element name to look for - doesn't seem to work 'application'
 
                     // Key here is the type of permission e.g. AppVisisbility or apexVisibility
                     if (localName == kvp.Key)
@@ -80,7 +77,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                             //FIXME: very rough comparison
                             if (element.Value != searchResult.Value)
-                                diffStore.Add(element, searchResult, DiffStore.Kind.Changed);
+                                diffStore.Add(element, searchResult, DiffStore.ChangeType.Changed);
                         }
                     }
                 }

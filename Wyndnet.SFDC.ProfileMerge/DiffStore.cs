@@ -13,33 +13,52 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     class DiffStore
     {
-        public List<Diff> Diffs { get { return diffs; } }
+        public List<Change> Diffs { get { return diffs; } }
 
-        List<Diff> diffs = new List<Diff>();
+        List<Change> diffs = new List<Change>();
 
         // Add differing element
-        public void Add(XElement originElement, XElement targetElement, Kind ChangeType)
+        public void Add(XElement originElement, XElement targetElement, ChangeType ChangeType)
         {
-            Diff diff = new Diff()
+            Change diff = new Change()
             {
-                Kind = ChangeType,
-                Type = originElement.Name.LocalName.ToString(),
+                ChangeType = ChangeType,
+                ElementType = originElement.Name.LocalName.ToString(),
                 OriginElement = originElement,
                 TargetElement = targetElement
             };
             diffs.Add(diff);
         }
 
-        internal class Diff
+        internal class Change
         {
-            public Kind Kind { get; set;}
-            public string Type { get; set; }
+            // Name of the element e.g. apex class name
+            public string Name
+            {
+                get { return getComponentName(); }
+            }
+            public ChangeType ChangeType { get; set;}
+            // Type of the element as declared in metadata file
+            public string ElementType { get; set; }
             public XElement OriginElement { get; set; }
             public XElement TargetElement { get; set; }
+
+            // Get the name of the component e.g. name of class or sObject
+            private string getComponentName()
+            {
+                XNamespace ns = OriginElement.Document.Root.GetDefaultNamespace();//doc.Root.GetDefaultNamespace();
+                string value = Config.ComponentDefinitions[ElementType];
+
+                var target =
+                    from el in OriginElement.Elements(ns + value)
+                    select el;
+
+                return target.Single().Value;
+            }
         }
 
         // Tells whether diff is for new item or changed item
-        public enum Kind
+        public enum ChangeType
         {
             New,
             Changed
