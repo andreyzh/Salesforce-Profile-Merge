@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace Wyndnet.SFDC.ProfileMerge
 {
@@ -47,6 +48,26 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             xmlHandler.Analyze(diffStore);
             dataGrid.ItemsSource = diffStore.Diffs;
+        }
+
+        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(sender != null)
+            {
+                DataGrid grid = sender as DataGrid;
+                if(grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+                {
+                    DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
+                    DiffStore.Change obj = dgr.Item as DiffStore.Change;
+                    DisplayDifference(obj);
+                }
+            }
+        }
+
+        private void DisplayDifference(DiffStore.Change change)
+        {
+            textBlock.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
+            textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());
         }
     }
 

@@ -5,18 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wyndnet.SFDC.ProfileMerge"
         mc:Ignorable="d"
-        Title="SFDC Profile Merge Tool" Height="1600" Width="900">
+        Title="SFDC Profile Merge Tool" Height="600" Width="900">
     <Grid>
-        <Button Content="Load XML 1" Margin="807,20,10,0" VerticalAlignment="Top" Click="Button_Click"/>
-        <Button Content="Load XML 2" Margin="807,45,10,0" VerticalAlignment="Top" Click="Button_Click"/>
-        <Button Content="Analyze" Margin="807,70,10,0" VerticalAlignment="Top" Click="Button_Click_1"/>
-        <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="449" Margin="10,10,0,0" VerticalAlignment="Top" Width="200px">
+        <Button Content="Load XML 1" Margin="370,10,447,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button Content="Load XML 2" Margin="450,10,367,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button Content="Analyze" Margin="530,10,287,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Left" Height="489" Margin="10,70,0,0" VerticalAlignment="Top" Width="207" MouseDoubleClick="dataGrid_MouseDoubleClick">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Element name" Binding="{Binding Name}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Change type" Binding="{Binding ChangeType}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Element type" Binding="{Binding ElementType}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Element name" Binding="{Binding Name}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="254,70,0,0" VerticalAlignment="Top" Height="389" Width="300"/>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="582,70,0,0" VerticalAlignment="Top" Height="389" Width="300"/>
 
     </Grid>
 </Window>
