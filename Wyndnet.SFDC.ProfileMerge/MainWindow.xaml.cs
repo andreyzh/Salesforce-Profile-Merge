@@ -108,6 +108,11 @@ namespace Wyndnet.SFDC.ProfileMerge
                     dataGrid.ItemsSource = diffStore.Diffs;
             }
         }
+
+        private void mergeButton_Click(object sender, RoutedEventArgs e)
+        {
+            xmlHandler.MergeChanges(diffStore);
+        }
     }
 
     

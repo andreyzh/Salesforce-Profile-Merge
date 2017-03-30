@@ -16,10 +16,12 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="Load XML 1" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
             <Button Grid.Column="1" Content="Load XML 2" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
             <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="analyseButton_Click_"/>
+            <Button Grid.Column="3" Content="Merge" Margin="10" VerticalAlignment="Top" Width="75" Click="mergeButton_Click"/>
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
