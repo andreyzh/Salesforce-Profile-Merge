@@ -34,8 +34,8 @@ namespace Wyndnet.SFDC.ProfileMerge
             DataContext = diffStore.Diffs;
         }
 
-        //TEMP: Click handler to load initial XML file
-        private void Button_Click(object sender, RoutedEventArgs e)
+        // Click handler to load source and target XML files
+        private void loadButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if(openFileDialog.ShowDialog() == true)
@@ -44,12 +44,14 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        // Click handler to start analysis of differences
+        private void analyseButton_Click_(object sender, RoutedEventArgs e)
         {
             xmlHandler.Analyze(diffStore);
             dataGrid.ItemsSource = diffStore.Diffs;
         }
 
+        // Grid element selection handler - displays XML content of nodes
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if(sender != null)
@@ -64,6 +66,25 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
         }
 
+        // Filter new items
+        private void showAdditionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateTable(DiffStore.ChangeType.New);
+        }
+        
+        // Filter changed items
+        private void showChangesButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateTable(DiffStore.ChangeType.Changed);
+        }
+        
+        //Show all items
+        private void showAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateTable(DiffStore.ChangeType.None);
+        }
+
+        // Display side-by-side XML from source and taget (if present)
         private void DisplayDifference(DiffStore.Change change)
         {
             // Clear blocks
@@ -72,39 +93,19 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             textBlock.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
             // For new items - don't display target
-            if(change.TargetElement != null)
+            if (change.TargetElement != null)
                 textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());
         }
 
-        private void button_Click_2(object sender, RoutedEventArgs e)
-        {
-            if(diffStore.Diffs.Count > 0)
-            {
-                dataGrid.ItemsSource = diffStore.Diffs.Where(change => change.ChangeType == DiffStore.ChangeType.Changed);
-            }
-        }
-
-        private void showAdditionsButton_Click(object sender, RoutedEventArgs e)
+        // Updates data grid based on selected change type
+        private void UpdateTable(DiffStore.ChangeType changeType)
         {
             if (diffStore.Diffs.Count > 0)
             {
-                dataGrid.ItemsSource = diffStore.Diffs.Where(change => change.ChangeType == DiffStore.ChangeType.New);
-            }
-        }
-
-        private void showChangesButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (diffStore.Diffs.Count > 0)
-            {
-                dataGrid.ItemsSource = diffStore.Diffs.Where(change => change.ChangeType == DiffStore.ChangeType.Changed);
-            }
-        }
-
-        private void showAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (diffStore.Diffs.Count > 0)
-            {
-                dataGrid.ItemsSource = diffStore.Diffs;
+                if(changeType != DiffStore.ChangeType.None)
+                    dataGrid.ItemsSource = diffStore.Diffs.Where(change => change.ChangeType == changeType);
+                else
+                    dataGrid.ItemsSource = diffStore.Diffs;
             }
         }
     }

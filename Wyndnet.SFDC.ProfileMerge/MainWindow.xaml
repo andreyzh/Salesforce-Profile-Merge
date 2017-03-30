@@ -17,9 +17,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="Load XML 1" Margin="10" VerticalAlignment="Top" Click="Button_Click"/>
-            <Button Grid.Column="1" Content="Load XML 2" Margin="10" VerticalAlignment="Top" Click="Button_Click"/>
-            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="Button_Click_1"/>
+            <Button Grid.Column="0" Content="Load XML 1" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
+            <Button Grid.Column="1" Content="Load XML 2" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
+            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="analyseButton_Click_"/>
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
@@ -31,10 +31,10 @@
                 <RowDefinition Height="Auto" MaxHeight="60" />
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showChangesButton" Content="Changes" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="showChangesButton_Click"/>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showAdditionsButton" Content="Additions" HorizontalAlignment="Left" Margin="85,0,0,0" VerticalAlignment="Top" Width="75" Click="showAdditionsButton_Click"/>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="170,0,0,0" VerticalAlignment="Top" Width="75" Click="showAllButton_Click"/>
-            <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="10,10,5,0" MouseDoubleClick="dataGrid_MouseDoubleClick">
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showChangesButton" Content="Changes" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75" Click="showChangesButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showAdditionsButton" Content="Additions" HorizontalAlignment="Left" Margin="90,0,0,0" VerticalAlignment="Top" Width="75" Click="showAdditionsButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="175,0,0,0" VerticalAlignment="Top" Width="75" Click="showAllButton_Click"/>
+            <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="5,0,5,0" MouseDoubleClick="dataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Header="Merge" Binding="{Binding Merge}"/>
                     <DataGridTextColumn Header="Element type" Binding="{Binding ElementType}" IsReadOnly="True"></DataGridTextColumn>

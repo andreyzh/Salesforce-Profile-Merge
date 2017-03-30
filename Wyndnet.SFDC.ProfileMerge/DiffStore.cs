@@ -32,6 +32,8 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         internal class Change
         {
+            // Indidates whether or not change needs to be merged
+            public bool Merge { get; set; }
             // Name of the element e.g. apex class name
             public string Name
             {
@@ -60,6 +62,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         // Tells whether diff is for new item or changed item
         public enum ChangeType
         {
+            None,
             New,
             Changed
         }
