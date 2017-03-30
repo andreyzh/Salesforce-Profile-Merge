@@ -54,12 +54,11 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             if(sender != null)
             {
-                DataGrid grid = sender as DataGrid;
-                if(grid != null && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
+                if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
                 {
                     DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
                     DiffStore.Change obj = dgr.Item as DiffStore.Change;
-                    if(obj != null)
+                    if (obj != null)
                         DisplayDifference(obj);
                 }
             }
@@ -67,8 +66,46 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void DisplayDifference(DiffStore.Change change)
         {
+            // Clear blocks
+            textBlock.Text = "";
+            textBlock_Copy.Text = "";
+
             textBlock.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
-            textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());
+            // For new items - don't display target
+            if(change.TargetElement != null)
+                textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());
+        }
+
+        private void button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if(diffStore.Diffs.Count > 0)
+            {
+                dataGrid.ItemsSource = diffStore.Diffs.Where(change => change.ChangeType == DiffStore.ChangeType.Changed);
+            }
+        }
+
+        private void showAdditionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (diffStore.Diffs.Count > 0)
+            {
+                dataGrid.ItemsSource = diffStore.Diffs.Where(change => change.ChangeType == DiffStore.ChangeType.New);
+            }
+        }
+
+        private void showChangesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (diffStore.Diffs.Count > 0)
+            {
+                dataGrid.ItemsSource = diffStore.Diffs.Where(change => change.ChangeType == DiffStore.ChangeType.Changed);
+            }
+        }
+
+        private void showAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (diffStore.Diffs.Count > 0)
+            {
+                dataGrid.ItemsSource = diffStore.Diffs;
+            }
         }
     }
 
