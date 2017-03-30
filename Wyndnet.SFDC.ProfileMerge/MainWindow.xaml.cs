@@ -59,7 +59,8 @@ namespace Wyndnet.SFDC.ProfileMerge
                 {
                     DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
                     DiffStore.Change obj = dgr.Item as DiffStore.Change;
-                    DisplayDifference(obj);
+                    if(obj != null)
+                        DisplayDifference(obj);
                 }
             }
         }
