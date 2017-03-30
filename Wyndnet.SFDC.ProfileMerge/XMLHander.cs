@@ -54,23 +54,23 @@ namespace Wyndnet.SFDC.ProfileMerge
                     if (localName == kvp.Key)
                     {
                         string searchTerm = null;
+
+                        // Fetch the node with name of the component and assign as search term
                         foreach (var subelement in element.Elements())
                         {
                             if (subelement.Name.LocalName == kvp.Value)
                                 searchTerm = subelement.Value;
                         }
 
+                        // Search for the same component in the other XML
+                        // LocalName is the type e.g. ApplicationVisibilities
+                        // SearchTerm is the unqiue name of the component
                         var target =
                             from el in doc2.Root.Elements(ns + localName)
                             where (string)el.Element(ns + kvp.Value) == searchTerm
                             select el;
 
-                        foreach (XElement el in target)
-                        {
-                            string t = el.Name.LocalName;
-                        }
-
-                        // Check that we have unique return
+                        // Check that we have unique return 
                         if (target.Count() == 1)
                         {
                             searchResult = target.Single();
@@ -78,6 +78,11 @@ namespace Wyndnet.SFDC.ProfileMerge
                             //FIXME: very rough comparison
                             if (element.Value != searchResult.Value)
                                 diffStore.Add(element, searchResult, DiffStore.ChangeType.Changed);
+                        }
+                        // If we have no return it means that the item is not present in target XML and we mark it as new
+                        if(target.Count() == 0)
+                        {
+                            diffStore.Add(element, null, DiffStore.ChangeType.New);
                         }
                     }
                 }
