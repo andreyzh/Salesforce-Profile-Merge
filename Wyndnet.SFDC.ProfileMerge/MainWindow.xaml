@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:Wyndnet.SFDC.ProfileMerge"
         mc:Ignorable="d"
         Title="SFDC Profile Merge Tool" Width="Auto" Height="Auto" MinWidth="900" d:DesignWidth="1200" d:DesignHeight="600">
-    <Grid MinHeight="400" Margin="0" VerticalAlignment="Top">
+    <Grid MinHeight="400" Margin="5" VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MaxHeight="60" />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
@@ -27,7 +27,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <DataGrid Grid.Column="0" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="10,10,5,0" VerticalAlignment="Top" MouseDoubleClick="dataGrid_MouseDoubleClick">
+            <DataGrid Grid.Column="0" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="10,10,5,0" MouseDoubleClick="dataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Header="Merge" Binding="{Binding Merge}"/>
                     <DataGridTextColumn Header="Element type" Binding="{Binding ElementType}" IsReadOnly="True"></DataGridTextColumn>
