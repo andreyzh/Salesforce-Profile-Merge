@@ -18,16 +18,12 @@ namespace Wyndnet.SFDC.ProfileMerge
         XDocument targetDoc;
 
         // Loads XMLs from a given path
-        public void LoadXml(string path)
+        public void LoadXml(string path, string targetSelection)
         {
-            if (sourceDoc == null)
-            {
+            if(targetSelection == "source")
                 sourceDoc = XDocument.Load(path);
-            }
-            else
-            {
+            if (targetSelection == "target")
                 targetDoc = XDocument.Load(path);
-            }
         }
 
         // Analyse differences between the input files, add to diff holder as new or changed
@@ -92,7 +88,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Merge marked changes
-        public void MergeChanges(DiffStore diffStore)
+        public void Merge(DiffStore diffStore)
         {
             // We don't want anything to happen to originals
             XDocument mergeDoc = new XDocument(targetDoc);
@@ -123,7 +119,25 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             while (additions.Count != 0)
             {
-                
+                foreach(var addition in additions.ToList())
+                {
+                    // Find previous node
+                    var previousNode =
+                        from el in mergeDoc.Root.Elements()
+                        where XNode.DeepEquals(el, addition.OriginElement.PreviousNode)
+                        select el;
+
+                    // Previous node was found - insert after
+                    if(previousNode != null)
+                    {
+                        //FIXME - are we sure it's unique and first result
+                        var node = previousNode.FirstOrDefault();
+                        node.AddAfterSelf(addition.OriginElement);
+
+                        // Remove our addition
+                        additions.Remove(addition);
+                    }
+                }
             }
             
 

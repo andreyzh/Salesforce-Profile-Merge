@@ -43,16 +43,26 @@ namespace Wyndnet.SFDC.ProfileMerge
         // Click handler to load source and target XML files
         private void loadButton_Click(object sender, RoutedEventArgs e)
         {
+            Button button = sender as Button;
+            string name = button.Name;
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if(openFileDialog.ShowDialog() == true)
             {
-                xmlHandler.LoadXml(openFileDialog.FileName);
+                if(name == "LoadSourceXml")
+                    xmlHandler.LoadXml(openFileDialog.FileName, "source");
+                if (name == "LoadTargetXml")
+                    xmlHandler.LoadXml(openFileDialog.FileName, "target");
             }
         }
 
         // Click handler to start analysis of differences
         private void analyseButton_Click_(object sender, RoutedEventArgs e)
         {
+            // Clear diffstore
+            diffStore.Clear();
+            diffs.Clear();
+
             // Calculate the differences
             xmlHandler.Analyze(diffStore);
             
@@ -123,7 +133,8 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void mergeButton_Click(object sender, RoutedEventArgs e)
         {
-            xmlHandler.MergeChanges(diffStore);
+            xmlHandler.Merge(diffStore);
+            MessageBox.Show("Merge Completed");
         }
     }
 

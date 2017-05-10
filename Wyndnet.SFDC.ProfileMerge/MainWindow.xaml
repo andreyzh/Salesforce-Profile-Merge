@@ -18,8 +18,8 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="Load XML 1" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
-            <Button Grid.Column="1" Content="Load XML 2" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
+            <Button Grid.Column="0" Name="LoadSourceXml" Content="Load XML 1" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
+            <Button Grid.Column="1" Name="LoadTargetXml" Content="Load XML 2" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
             <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="analyseButton_Click_"/>
             <Button Grid.Column="3" Content="Merge" Margin="10" VerticalAlignment="Top" Width="75" Click="mergeButton_Click"/>
         </Grid>

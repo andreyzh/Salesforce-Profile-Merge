@@ -30,6 +30,11 @@ namespace Wyndnet.SFDC.ProfileMerge
             diffs.Add(diff);
         }
 
+        public void Clear()
+        {
+            diffs.Clear();
+        }
+
         internal class Change
         {
             // Indidates whether or not change needs to be merged
