@@ -48,6 +48,9 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Get the name of the component e.g. name of class or sObject
             private string getComponentName()
             {
+                if (OriginElement == null)
+                    return null;
+
                 XNamespace ns = OriginElement.Document.Root.GetDefaultNamespace();//doc.Root.GetDefaultNamespace();
                 string value = Config.ComponentDefinitions[ElementType];
 

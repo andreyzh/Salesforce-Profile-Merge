@@ -121,15 +121,6 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 mergeDoc.Save(writer);
             }
-
-            //using (var writer = new XmlTextWriter("merged.xml", new UTF8Encoding(false)))
-            //{
-                
-
-            //    writer.Formatting = Formatting.Indented;
-            //    writer.Indentation = 4;
-            //    mergeDoc.Save(writer);
-            //}
         }
 
         private void GetApplicationTypes()
