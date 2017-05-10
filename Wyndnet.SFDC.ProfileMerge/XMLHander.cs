@@ -91,13 +91,14 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
         }
 
-        // TODO
+        // Merge marked changes
         public void MergeChanges(DiffStore diffStore)
         {
             // We don't want anything to happen to originals
             XDocument mergeDoc = new XDocument(targetDoc);
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
 
+            // Merge marked changed elements
             foreach (DiffStore.Change change in diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.Changed && chg.Merge))
             {
                 var replacementTarget =
@@ -110,6 +111,21 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                 replacementTargetElement.ReplaceWith(change.OriginElement);
             }
+
+            // Merge marked added elements
+            List<DiffStore.Change> additions = new List<DiffStore.Change>();
+            //var additions = diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.New && chg.Merge) as List<DiffStore.Change>;
+
+            foreach (DiffStore.Change change in diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.New && chg.Merge))
+            {
+                additions.Add(change);
+            }
+
+            while (additions.Count != 0)
+            {
+                
+            }
+            
 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Encoding = new UTF8Encoding(false);
