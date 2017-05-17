@@ -136,6 +136,18 @@ namespace Wyndnet.SFDC.ProfileMerge
             xmlHandler.Merge(diffStore);
             MessageBox.Show("Merge Completed");
         }
+
+        private void selectAllCheckboxChecked(object sender, RoutedEventArgs e)
+        {
+            dataGrid.Items.OfType<Change>().ToList().ForEach(x => x.Merge = true);
+            diffView.Refresh();
+        }
+
+        private void selectAllCheckboxUnchecked(object sender, RoutedEventArgs e)
+        {
+            dataGrid.Items.OfType<Change>().ToList().ForEach(x => x.Merge = false);
+            diffView.Refresh();
+        }
     }
 
     
