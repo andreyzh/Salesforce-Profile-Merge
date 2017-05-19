@@ -137,11 +137,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             worker.WorkerReportsProgress = true;
             worker.DoWork += mergeXml;
             worker.RunWorkerCompleted += mergeXmlCompleted;
-            //progressBar.Visibility = Visibility.Visible;
+            worker.ProgressChanged += mergeXmlProgressChanged;
+            progressBar.Visibility = Visibility.Visible;
 
             worker.RunWorkerAsync(); 
-            
-            
         }
 
         private void mergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)

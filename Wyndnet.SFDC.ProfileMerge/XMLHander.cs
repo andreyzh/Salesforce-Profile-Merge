@@ -18,7 +18,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         DiffStore diffStore;
         XDocument sourceDoc;
         XDocument targetDoc;
-        int mergeProgress = 0;
+        float mergeProgress;
 
         // Loads XMLs from a given path
         public void LoadXml(string path, string targetSelection)
@@ -119,13 +119,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 additions.Add(change);
             }
-            int additionsCount = additions.Count;
+            float additionsSum = additions.Count;
 
             while (additions.Count != 0)
-            {
-                mergeProgress = 1-(additions.Count / additionsCount);
-                (sender as BackgroundWorker).ReportProgress(mergeProgress);
-
+            {                
                 foreach (var addition in additions.ToList())
                 {
                     // Find previous node
@@ -148,6 +145,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                         //TODO: We did not find where to put it - remove for now
                         else
                             additions.Remove(addition);
+
+                        mergeProgress = (1 - (additions.Count / additionsSum)) * 100;
+                        (sender as BackgroundWorker).ReportProgress((int)mergeProgress);
                     }
                 }
             }
