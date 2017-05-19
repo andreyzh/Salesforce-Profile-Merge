@@ -133,8 +133,31 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void mergeButton_Click(object sender, RoutedEventArgs e)
         {
-            xmlHandler.Merge(diffStore);
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += mergeXml;
+            worker.RunWorkerCompleted += mergeXmlCompleted;
+            //progressBar.Visibility = Visibility.Visible;
+
+            worker.RunWorkerAsync(); 
+            
+            
+        }
+
+        private void mergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBar.Visibility = Visibility.Hidden;
             MessageBox.Show("Merge Completed");
+        }
+
+        void mergeXml(object sender, DoWorkEventArgs e)
+        {
+            xmlHandler.Merge(diffStore, sender);
+        }
+
+        void mergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar.Value = e.ProgressPercentage;
         }
 
         private void selectAllCheckboxChecked(object sender, RoutedEventArgs e)

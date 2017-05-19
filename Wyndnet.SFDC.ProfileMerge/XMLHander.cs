@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,11 @@ namespace Wyndnet.SFDC.ProfileMerge
     class XMLHandler
     {
         public Dictionary<string, string> ComponentDefinitions { get; set; }
+
         DiffStore diffStore;
         XDocument sourceDoc;
         XDocument targetDoc;
+        int mergeProgress = 0;
 
         // Loads XMLs from a given path
         public void LoadXml(string path, string targetSelection)
@@ -88,7 +91,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Merge marked changes
-        public void Merge(DiffStore diffStore)
+        public void Merge(DiffStore diffStore, object sender)
         {
             // We don't want anything to happen to originals
             XDocument mergeDoc = new XDocument(targetDoc);
@@ -116,10 +119,14 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 additions.Add(change);
             }
+            int additionsCount = additions.Count;
 
             while (additions.Count != 0)
             {
-                foreach(var addition in additions.ToList())
+                mergeProgress = 1-(additions.Count / additionsCount);
+                (sender as BackgroundWorker).ReportProgress(mergeProgress);
+
+                foreach (var addition in additions.ToList())
                 {
                     // Find previous node
                     var previousNode =
@@ -132,10 +139,15 @@ namespace Wyndnet.SFDC.ProfileMerge
                     {
                         //FIXME - are we sure it's unique and first result
                         var node = previousNode.FirstOrDefault();
-                        node.AddAfterSelf(addition.OriginElement);
-
-                        // Remove our addition
-                        additions.Remove(addition);
+                        if (node != null)
+                        {
+                            node.AddAfterSelf(addition.OriginElement);
+                            // Remove our addition
+                            additions.Remove(addition);
+                        }
+                        //TODO: We did not find where to put it - remove for now
+                        else
+                            additions.Remove(addition);
                     }
                 }
             }
