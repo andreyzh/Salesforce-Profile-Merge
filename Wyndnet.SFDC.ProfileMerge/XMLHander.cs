@@ -9,6 +9,9 @@ using System.Xml.Linq;
 
 namespace Wyndnet.SFDC.ProfileMerge
 {
+    /// <summary>
+    /// Orchestrate Operations on XML Files
+    /// </summary>
     // Currently it's multi-purpose class meant to do everything related to XML analysis
     //TODO: Refactor
     class XMLHandler
