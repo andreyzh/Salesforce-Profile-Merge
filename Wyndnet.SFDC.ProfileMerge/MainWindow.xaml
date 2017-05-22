@@ -35,7 +35,8 @@
             </Grid.RowDefinitions>
             <Button Grid.Column="0" Grid.Row="0" x:Name="showChangesButton" Content="Changes" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75" Click="showChangesButton_Click"/>
             <Button Grid.Column="0" Grid.Row="0" x:Name="showAdditionsButton" Content="Additions" HorizontalAlignment="Left" Margin="90,0,0,0" VerticalAlignment="Top" Width="75" Click="showAdditionsButton_Click"/>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="175,0,0,0" VerticalAlignment="Top" Width="75" Click="showAllButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showDeletionsButton" Content="Deletions" HorizontalAlignment="Left" Margin="175,0,0,0" VerticalAlignment="Top" Width="75" Click="showAdditionsButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Top" Width="75" Click="showAllButton_Click"/>
             <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="5,0,5,0" MouseDoubleClick="dataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Header="Merge" Binding="{Binding Merge}">
@@ -53,7 +54,7 @@
             <Label Grid.Column="1" Grid.Row="0" Content="XML 1" HorizontalAlignment="Center"/>
             <Label Grid.Column="2" Grid.Row="0" Content="XML 2" HorizontalAlignment="Center"/>
             <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
-                <TextBlock x:Name="textBlock"  VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
+                <TextBox x:Name="textBlock" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
             </Border>
             <Border Grid.Column="2" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
                 <TextBlock x:Name="textBlock_Copy" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
