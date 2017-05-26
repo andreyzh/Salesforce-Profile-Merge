@@ -9,11 +9,11 @@ namespace Wyndnet.SFDC.ProfileMerge
 {
     class XMLMerge
     {
-        public XDocument Merge()
-        {
+        //public XDocument Merge()
+        //{
             //XDocument mergeDoc = new XDocument(targetDoc);
 
             //return mergeDoc;
-        }
+        //}
     }
 }

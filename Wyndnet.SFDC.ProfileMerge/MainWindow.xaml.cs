@@ -131,6 +131,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());
         }
 
+        // Merge button handler
         private void mergeButton_Click(object sender, RoutedEventArgs e)
         {
             BackgroundWorker worker = new BackgroundWorker();
@@ -170,9 +171,26 @@ namespace Wyndnet.SFDC.ProfileMerge
             dataGrid.Items.OfType<Change>().ToList().ForEach(x => x.Merge = false);
             diffView.Refresh();
         }
-    }
 
-    
+        // Handle multiple selections
+        private void dataGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (sender != null && sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count > 1)
+            {
+                // Set multiple merge items
+                if (e.Key == Key.A)
+                {
+                    foreach(var item in grid.SelectedItems)
+                    {
+                        var change = item as DiffStore.Change;
+                        change.Merge = !change.Merge;
+                    }
+                }
+
+                diffView.Refresh();
+            }      
+        }
+    }
 }
 
 /*
