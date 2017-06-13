@@ -72,7 +72,8 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             None,
             New,
-            Changed
+            Changed,
+            Deleted
         }
     }
 }
