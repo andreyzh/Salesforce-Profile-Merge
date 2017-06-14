@@ -38,6 +38,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             InitializeComponent();
             xmlHandler.ComponentDefinitions = Config.LoadComponentDefinitions();
+            xmlHandler.DiffStore = diffStore;
         }
 
         // Click handler to load source and target XML files
@@ -64,7 +65,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             diffs.Clear();
 
             // Calculate the differences
-            xmlHandler.Analyze(diffStore);
+            xmlHandler.Analyze();
             
             // Populate observable collection
             foreach(Change change in diffStore.Diffs)
@@ -111,7 +112,17 @@ namespace Wyndnet.SFDC.ProfileMerge
                 return change.ChangeType == ChangeType.Changed;
             });
         }
-        
+
+        // Filter deleted items
+        private void showDeletionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            diffView.Filter = new Predicate<object>(item =>
+            {
+                Change change = item as Change;
+                return change.ChangeType == ChangeType.Deleted;
+            });
+        }
+
         //Show all items
         private void showAllButton_Click(object sender, RoutedEventArgs e)
         {
@@ -125,7 +136,13 @@ namespace Wyndnet.SFDC.ProfileMerge
             textBlock.Text = "";
             textBlock_Copy.Text = "";
 
-            textBlock.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
+            if(change.ChangeType != ChangeType.Deleted)
+                textBlock.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
+            else
+            {
+                textBlock.Text = "Deleted";
+                textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
+            }
             // For new items - don't display target
             if (change.TargetElement != null)
                 textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());

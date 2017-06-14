@@ -17,8 +17,8 @@ namespace Wyndnet.SFDC.ProfileMerge
     class XMLHandler
     {
         public Dictionary<string, string> ComponentDefinitions { get; set; }
+        public DiffStore DiffStore { get; set; }
 
-        DiffStore diffStore;
         XDocument sourceDoc;
         XDocument targetDoc;
         float mergeProgress;
@@ -32,7 +32,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 targetDoc = XDocument.Load(path);
         }
 
-        // Analyse differences between the input files, add to diff holder as new or changed
+        /* Analyse differences between the input files, add to diff holder as new or changed
         public void Analyze(DiffStore diffStore)
         {
             this.diffStore = diffStore;
@@ -91,6 +91,12 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
                 }
             }
+        }*/
+
+        public void Analyze()
+        {
+            XMLAnalysis analysis = new XMLAnalysis(ComponentDefinitions, sourceDoc, targetDoc);
+            analysis.Analyse(DiffStore);
         }
 
         // Merge marked changes
