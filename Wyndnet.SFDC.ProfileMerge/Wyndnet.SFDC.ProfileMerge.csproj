@@ -55,9 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Utils.cs" />
-    <Compile Include="XMLAnalysis.cs" />
     <Compile Include="XMLHander.cs" />
-    <Compile Include="XMLMerge.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

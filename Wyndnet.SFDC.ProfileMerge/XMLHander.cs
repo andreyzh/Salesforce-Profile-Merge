@@ -32,11 +32,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                 targetDoc = XDocument.Load(path);
         }
 
-        /* Analyse differences between the input files, add to diff holder as new or changed
-        public void Analyze(DiffStore diffStore)
+        // Analyse differences between the input files, add to diff holder as new or changed
+        public void Analyze()
         {
-            this.diffStore = diffStore;
-
             //FIXME: Temp handler for null results
             if (sourceDoc == null || targetDoc == null)
                 return;
@@ -81,27 +79,65 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                             //FIXME: very rough comparison
                             if (element.Value != searchResult.Value)
-                                diffStore.Add(element, searchResult, DiffStore.ChangeType.Changed);
+                                DiffStore.Add(element, searchResult, DiffStore.ChangeType.Changed);
                         }
                         // If we have no return it means that the item is not present in target XML and we mark it as new
                         if(target.Count() == 0)
                         {
-                            diffStore.Add(element, null, DiffStore.ChangeType.New);
+                            DiffStore.Add(element, null, DiffStore.ChangeType.New);
                         }
                     }
                 }
             }
-        }*/
 
-        public void Analyze()
-        {
-            XMLAnalysis analysis = new XMLAnalysis(ComponentDefinitions, sourceDoc, targetDoc);
-            analysis.Analyse(DiffStore);
+            // Go though all elements, but this time scan for deletions
+            // We are now looking at target document and checking if it doen't have something present in source
+            //TODO: Refactor as subroutine because here we're mostly copy-pasting upper section
+            foreach (var element in targetDoc.Root.Elements())
+            {
+                // Inner loop - see if the component name matches
+                foreach (var kvp in ComponentDefinitions)
+                {
+                    XElement searchResult;
+
+                    // Get element type e.g. apexVisibility
+                    string localName = element.Name.LocalName;
+
+                    // Key here is the type of permission e.g. AppVisisbility or apexVisibility
+                    if (localName == kvp.Key)
+                    {
+                        string searchTerm = null;
+
+                        // Fetch the node with name of the component and assign as search term
+                        foreach (var subelement in element.Elements())
+                        {
+                            if (subelement.Name.LocalName == kvp.Value)
+                                searchTerm = subelement.Value;
+                        }
+
+                        // Search for the same component in the other XML
+                        // LocalName is the type e.g. ApplicationVisibilities
+                        // SearchTerm is the unqiue name of the component
+                        var target =
+                            from el in sourceDoc.Root.Elements(ns + localName)
+                            where (string)el.Element(ns + kvp.Value) == searchTerm
+                            select el;
+
+                        // If we have no return it means that the item is not present in source XML, so it must have been deleted
+                        if (target.Count() == 0)
+                        {
+                            DiffStore.Add(element, null, DiffStore.ChangeType.Deleted);
+                        }
+                    }
+                }
+            }
         }
 
         // Merge marked changes
         public void Merge(DiffStore diffStore, object sender)
         {
+            //XMLMerge xmlMerge = new XMLMerge();
+
             // We don't want anything to happen to originals
             XDocument mergeDoc = new XDocument(targetDoc);
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
