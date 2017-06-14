@@ -77,9 +77,12 @@ namespace Wyndnet.SFDC.ProfileMerge
                         {
                             searchResult = target.Single();
 
-                            //FIXME: very rough comparison
-                            if (element.Value != searchResult.Value)
+                            // Case for non-layout changes
+                            if (element.Value != searchResult.Value && localName != "layoutAssignments")
                                 DiffStore.Add(element, searchResult, DiffStore.ChangeType.Changed);
+                            // For now we can only add new layout assignments
+                            if(element.Value != searchResult.Value && localName == "layoutAssignments")
+                                DiffStore.Add(element, null, DiffStore.ChangeType.New);
                         }
                         // If we have no return it means that the item is not present in target XML and we mark it as new
                         if(target.Count() == 0)
@@ -98,8 +101,6 @@ namespace Wyndnet.SFDC.ProfileMerge
                 // Inner loop - see if the component name matches
                 foreach (var kvp in ComponentDefinitions)
                 {
-                    XElement searchResult;
-
                     // Get element type e.g. apexVisibility
                     string localName = element.Name.LocalName;
 
@@ -156,9 +157,23 @@ namespace Wyndnet.SFDC.ProfileMerge
                 replacementTargetElement.ReplaceWith(change.OriginElement);
             }
 
+            // Merge marked deleted elements
+            foreach (DiffStore.Change change in diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.Deleted && chg.Merge))
+            {
+                var replacementTarget =
+                            from el in mergeDoc.Root.Elements(ns + change.ElementType)
+                            where (string)el.Element(ns + Config.ComponentDefinitions[change.ElementType]) == change.Name
+                            select el;
+
+                //FIXME: Are we sure there's only one element?
+                XElement replacementTargetElement = replacementTarget.Single();
+
+                replacementTargetElement.Remove();
+            }
+
+
             // Merge marked added elements
             List<DiffStore.Change> additions = new List<DiffStore.Change>();
-            //var additions = diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.New && chg.Merge) as List<DiffStore.Change>;
 
             foreach (DiffStore.Change change in diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.New && chg.Merge))
             {

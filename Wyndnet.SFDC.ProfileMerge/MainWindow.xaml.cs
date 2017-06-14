@@ -202,9 +202,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                         var change = item as DiffStore.Change;
                         change.Merge = !change.Merge;
                     }
-                }
 
-                diffView.Refresh();
+                    diffView.Refresh();
+                }
             }      
         }
     }
