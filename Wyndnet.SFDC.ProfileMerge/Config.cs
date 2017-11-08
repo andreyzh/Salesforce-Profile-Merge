@@ -11,14 +11,20 @@ namespace Wyndnet.SFDC.ProfileMerge
 {
     static class Config
     {
+        public static string Base { get; private set; }
+        public static string Local { get; private set; }
+        public static string Remote { get; private set; }
+        public static string Merged { get; private set; }
+
         public static Dictionary<string, string> ComponentDefinitions { get { return componentDefinitions; } }
         static Dictionary<string, string> componentDefinitions = new Dictionary<string, string>();
 
         public static Dictionary<string, string> LoadComponentDefinitions()
         {
             try
-            { 
-                XDocument doc = XDocument.Load("components.xml");
+            {
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "components.xml");
+                XDocument doc = XDocument.Load(path);
                 var results = from component in doc.Root.Elements()
                               select new
                               {
@@ -39,7 +45,13 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             return componentDefinitions;
         }
-        //1fe4263a1a03a7d58c8b4f08c503c06d
-        //1fe4263a1a03a7d58c8b4f08c503c06d
+
+        public static void SetPaths(string basePath, string localPath, string remotePath, string mergedPath)
+        {
+            Base = basePath;
+            Local = localPath;
+            Remote = remotePath;
+            Merged = mergedPath;
+        }
     }
 }

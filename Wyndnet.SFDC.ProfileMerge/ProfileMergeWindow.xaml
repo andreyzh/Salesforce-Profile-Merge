@@ -1,0 +1,65 @@
+﻿<Window x:Class="Wyndnet.SFDC.ProfileMerge.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Wyndnet.SFDC.ProfileMerge"
+        mc:Ignorable="d"
+        Title="SFDC Profile Merge Tool" Width="Auto" Height="Auto" MinWidth="900" d:DesignWidth="1200" d:DesignHeight="600">
+    <Grid MinHeight="400" Margin="5" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MaxHeight="60" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="LoadSourceXml" Content="Source File" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
+            <Button Grid.Column="1" Name="LoadTargetXml" Content="Target File" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
+            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="analyseButton_Click_"/>
+            <Button Grid.Column="3" Content="Save Merged" Margin="10" VerticalAlignment="Top" Width="75" Click="mergeButton_Click"/>
+        </Grid>
+        <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MaxHeight="60" />
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showChangesButton" Content="Changes" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75" Click="showChangesButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showAdditionsButton" Content="Additions" HorizontalAlignment="Left" Margin="90,0,0,0" VerticalAlignment="Top" Width="75" Click="showAdditionsButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showDeletionsButton" Content="Deletions" HorizontalAlignment="Left" Margin="175,0,0,0" VerticalAlignment="Top" Width="75" Click="showDeletionsButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Top" Width="75" Click="showAllButton_Click"/>
+            <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="5,0,5,0" MouseDoubleClick="dataGrid_MouseDoubleClick" KeyDown="dataGrid_KeyDown">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Header="Merge" Binding="{Binding Merge}">
+                        <DataGridCheckBoxColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <CheckBox Name="SelectAll" Content="Merge" Checked="selectAllCheckboxChecked" Unchecked="selectAllCheckboxUnchecked"/>
+                            </DataTemplate>
+                        </DataGridCheckBoxColumn.HeaderTemplate>
+                    </DataGridCheckBoxColumn>
+                    <DataGridTextColumn Header="Element type" Binding="{Binding ElementType}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Element name" Binding="{Binding Name}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Change type" Binding="{Binding ChangeType}" IsReadOnly="True"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Label Grid.Column="1" Grid.Row="0" Content="Source XML" HorizontalAlignment="Center"/>
+            <Label Grid.Column="2" Grid.Row="0" Content="Target XML" HorizontalAlignment="Center"/>
+            <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
+                <TextBox x:Name="textBlock" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
+            </Border>
+            <Border Grid.Column="2" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
+                <TextBlock x:Name="textBlock_Copy" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
+            </Border>
+        </Grid>
+        <ProgressBar Minimum="0" Maximum="100" Visibility="Hidden" Name="progressBar" />
+    </Grid>
+</Window>

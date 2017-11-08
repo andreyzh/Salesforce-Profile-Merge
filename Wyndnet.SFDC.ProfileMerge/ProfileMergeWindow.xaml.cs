@@ -33,12 +33,6 @@ namespace Wyndnet.SFDC.ProfileMerge
         DiffStore diffStore = new DiffStore();
         // Holds view of the diffs from diffstore
         ObservableCollection<Change> diffs = new ObservableCollection<Change>();
-
-        string b = Config.Base;
-        string l = Config.Local;
-        string r = Config.Remote;
-        string m = Config.Merged;
-        string curentDir = Environment.CurrentDirectory;
         
         public MainWindow()
         {
