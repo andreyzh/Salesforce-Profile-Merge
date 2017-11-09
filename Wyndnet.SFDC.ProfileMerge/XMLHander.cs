@@ -17,7 +17,7 @@ namespace Wyndnet.SFDC.ProfileMerge
     class XMLHandler
     {
         public Dictionary<string, string> ComponentDefinitions { get; set; }
-        public DiffStore DiffStore { get; set; }
+        public DifferenceStore DiffStore { get; set; }
 
         XDocument sourceDoc;
         XDocument targetDoc;
@@ -79,15 +79,15 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                             // Case for non-layout changes
                             if (element.Value != searchResult.Value && localName != "layoutAssignments")
-                                DiffStore.Add(element, searchResult, DiffStore.ChangeType.Changed);
+                                DiffStore.Add(element, searchResult, DifferenceStore.ChangeType.Changed);
                             // For now we can only add new layout assignments
                             if(element.Value != searchResult.Value && localName == "layoutAssignments")
-                                DiffStore.Add(element, null, DiffStore.ChangeType.New);
+                                DiffStore.Add(element, null, DifferenceStore.ChangeType.New);
                         }
                         // If we have no return it means that the item is not present in target XML and we mark it as new
                         if(target.Count() == 0)
                         {
-                            DiffStore.Add(element, null, DiffStore.ChangeType.New);
+                            DiffStore.Add(element, null, DifferenceStore.ChangeType.New);
                         }
                     }
                 }
@@ -127,7 +127,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                         // If we have no return it means that the item is not present in source XML, so it must have been deleted
                         if (target.Count() == 0)
                         {
-                            DiffStore.Add(element, null, DiffStore.ChangeType.Deleted);
+                            DiffStore.Add(element, null, DifferenceStore.ChangeType.Deleted);
                         }
                     }
                 }
@@ -135,7 +135,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Merge marked changes
-        public void Merge(DiffStore diffStore, object sender)
+        public void Merge(DifferenceStore diffStore, object sender)
         {
             //XMLMerge xmlMerge = new XMLMerge();
 
@@ -144,7 +144,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
 
             // Merge marked changed elements
-            foreach (DiffStore.Change change in diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.Changed && chg.Merge))
+            foreach (DifferenceStore.Difference change in diffStore.Diffs.Where(chg => chg.ChangeType == DifferenceStore.ChangeType.Changed && chg.Merge))
             {
                 var replacementTarget =
                             from el in mergeDoc.Root.Elements(ns + change.ElementType)
@@ -158,7 +158,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
 
             // Merge marked deleted elements
-            foreach (DiffStore.Change change in diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.Deleted && chg.Merge))
+            foreach (DifferenceStore.Difference change in diffStore.Diffs.Where(chg => chg.ChangeType == DifferenceStore.ChangeType.Deleted && chg.Merge))
             {
                 var replacementTarget =
                             from el in mergeDoc.Root.Elements(ns + change.ElementType)
@@ -173,9 +173,9 @@ namespace Wyndnet.SFDC.ProfileMerge
 
 
             // Merge marked added elements
-            List<DiffStore.Change> additions = new List<DiffStore.Change>();
+            List<DifferenceStore.Difference> additions = new List<DifferenceStore.Difference>();
 
-            foreach (DiffStore.Change change in diffStore.Diffs.Where(chg => chg.ChangeType == DiffStore.ChangeType.New && chg.Merge))
+            foreach (DifferenceStore.Difference change in diffStore.Diffs.Where(chg => chg.ChangeType == DifferenceStore.ChangeType.New && chg.Merge))
             {
                 additions.Add(change);
             }

@@ -9,18 +9,18 @@ using System.Xml.Linq;
 namespace Wyndnet.SFDC.ProfileMerge
 {
     /// <summary>
-    /// This class is used to store differenced between files
+    /// This class is used to store differences between files
     /// </summary>
-    class DiffStore
+    class DifferenceStore
     {
-        public List<Change> Diffs { get { return diffs; } }
+        public List<Difference> Diffs { get { return diffs; } }
 
-        List<Change> diffs = new List<Change>();
+        List<Difference> diffs = new List<Difference>();
 
         // Add differing element
         public void Add(XElement originElement, XElement targetElement, ChangeType ChangeType)
         {
-            Change diff = new Change()
+            Difference diff = new Difference()
             {
                 ChangeType = ChangeType,
                 ElementType = originElement.Name.LocalName.ToString(),
@@ -35,7 +35,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             diffs.Clear();
         }
 
-        internal class Change
+        internal class Difference
         {
             // Indidates whether or not change needs to be merged
             public bool Merge { get; set; }

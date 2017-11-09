@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using static Wyndnet.SFDC.ProfileMerge.DiffStore;
+using static Wyndnet.SFDC.ProfileMerge.DifferenceStore;
 
 namespace Wyndnet.SFDC.ProfileMerge
 {
@@ -30,9 +30,9 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         XMLHandler xmlHandler = new XMLHandler();
         // Contains diffs found from XMLs
-        DiffStore diffStore = new DiffStore();
+        DifferenceStore diffStore = new DifferenceStore();
         // Holds view of the diffs from diffstore
-        ObservableCollection<Change> diffs = new ObservableCollection<Change>();
+        ObservableCollection<Difference> diffs = new ObservableCollection<Difference>();
 
         string b = Config.Base;
         string l = Config.Local;
@@ -74,7 +74,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             xmlHandler.Analyze();
             
             // Populate observable collection
-            foreach(Change change in diffStore.Diffs)
+            foreach(Difference change in diffStore.Diffs)
             {
                 diffs.Add(change);
             }
@@ -92,7 +92,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
                 {
                     DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-                    DiffStore.Change obj = dgr.Item as DiffStore.Change;
+                    DifferenceStore.Difference obj = dgr.Item as DifferenceStore.Difference;
                     if (obj != null)
                         DisplayDifference(obj);
                 }
@@ -104,7 +104,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             diffView.Filter = new Predicate<object>(item =>
             {
-                Change change = item as Change;
+                Difference change = item as Difference;
                 return change.ChangeType == ChangeType.New;
             });
         }
@@ -114,7 +114,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             diffView.Filter = new Predicate<object>(item =>
             {
-                Change change = item as Change;
+                Difference change = item as Difference;
                 return change.ChangeType == ChangeType.Changed;
             });
         }
@@ -124,7 +124,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             diffView.Filter = new Predicate<object>(item =>
             {
-                Change change = item as Change;
+                Difference change = item as Difference;
                 return change.ChangeType == ChangeType.Deleted;
             });
         }
@@ -136,7 +136,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Display side-by-side XML from source and taget (if present)
-        private void DisplayDifference(DiffStore.Change change)
+        private void DisplayDifference(DifferenceStore.Difference change)
         {
             // Clear blocks
             textBlock.Text = "";
@@ -185,13 +185,13 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void selectAllCheckboxChecked(object sender, RoutedEventArgs e)
         {
-            dataGrid.Items.OfType<Change>().ToList().ForEach(x => x.Merge = true);
+            dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = true);
             diffView.Refresh();
         }
 
         private void selectAllCheckboxUnchecked(object sender, RoutedEventArgs e)
         {
-            dataGrid.Items.OfType<Change>().ToList().ForEach(x => x.Merge = false);
+            dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = false);
             diffView.Refresh();
         }
 
@@ -205,7 +205,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 {
                     foreach(var item in grid.SelectedItems)
                     {
-                        var change = item as DiffStore.Change;
+                        var change = item as DifferenceStore.Difference;
                         change.Merge = !change.Merge;
                     }
 
