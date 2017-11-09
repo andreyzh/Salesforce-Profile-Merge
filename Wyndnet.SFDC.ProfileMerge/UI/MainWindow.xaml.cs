@@ -26,29 +26,24 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ICollectionView diffView { get; set; }
+        private XMLHandler xmlHandler = new XMLHandler();
 
-        XMLHandler xmlHandler = new XMLHandler();
-        // Contains diffs found from XMLs
-        DifferenceStore diffStore = new DifferenceStore();
-        // Holds view of the diffs from diffstore
-        ObservableCollection<Difference> diffs = new ObservableCollection<Difference>();
-
-        string b = Config.Base;
-        string l = Config.Local;
-        string r = Config.Remote;
-        string m = Config.Merged;
-        string curentDir = Environment.CurrentDirectory;
+        private ICollectionView DiffView { get; set; }
+        private DifferenceStore diffStore = new DifferenceStore();
+        private ObservableCollection<Difference> diffs = new ObservableCollection<Difference>();        
         
         public MainWindow()
         {
             InitializeComponent();
             xmlHandler.ComponentDefinitions = Config.LoadComponentDefinitions();
             xmlHandler.DiffStore = diffStore;
+
+            xmlHandler.LoadXml(Config.Remote, "target");
+            xmlHandler.LoadXml(Config.Local, "source");
         }
 
         // Click handler to load source and target XML files
-        private void loadButton_Click(object sender, RoutedEventArgs e)
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             string name = button.Name;
@@ -64,7 +59,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Click handler to start analysis of differences
-        private void analyseButton_Click_(object sender, RoutedEventArgs e)
+        private void AnalyseButton_Click_(object sender, RoutedEventArgs e)
         {
             // Clear diffstore
             diffStore.Clear();
@@ -79,30 +74,29 @@ namespace Wyndnet.SFDC.ProfileMerge
                 diffs.Add(change);
             }
 
-            diffView = CollectionViewSource.GetDefaultView(diffs);
+            DiffView = CollectionViewSource.GetDefaultView(diffs);
             
-            dataGrid.ItemsSource = diffView;
+            dataGrid.ItemsSource = DiffView;
         }
 
         // Grid element selection handler - displays XML content of nodes
-        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if(sender != null)
             {
                 if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
                 {
                     DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-                    DifferenceStore.Difference obj = dgr.Item as DifferenceStore.Difference;
-                    if (obj != null)
+                    if (dgr.Item is DifferenceStore.Difference obj)
                         DisplayDifference(obj);
                 }
             }
         }
 
         // Filter new items
-        private void showAdditionsButton_Click(object sender, RoutedEventArgs e)
+        private void ShowAdditionsButton_Click(object sender, RoutedEventArgs e)
         {
-            diffView.Filter = new Predicate<object>(item =>
+            DiffView.Filter = new Predicate<object>(item =>
             {
                 Difference change = item as Difference;
                 return change.ChangeType == ChangeType.New;
@@ -110,9 +104,9 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
         
         // Filter changed items
-        private void showChangesButton_Click(object sender, RoutedEventArgs e)
+        private void ShowChangesButton_Click(object sender, RoutedEventArgs e)
         {
-            diffView.Filter = new Predicate<object>(item =>
+            DiffView.Filter = new Predicate<object>(item =>
             {
                 Difference change = item as Difference;
                 return change.ChangeType == ChangeType.Changed;
@@ -120,9 +114,9 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Filter deleted items
-        private void showDeletionsButton_Click(object sender, RoutedEventArgs e)
+        private void ShowDeletionsButton_Click(object sender, RoutedEventArgs e)
         {
-            diffView.Filter = new Predicate<object>(item =>
+            DiffView.Filter = new Predicate<object>(item =>
             {
                 Difference change = item as Difference;
                 return change.ChangeType == ChangeType.Deleted;
@@ -130,9 +124,9 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         //Show all items
-        private void showAllButton_Click(object sender, RoutedEventArgs e)
+        private void ShowAllButton_Click(object sender, RoutedEventArgs e)
         {
-            diffView.Filter = null;
+            DiffView.Filter = null;
         }
 
         // Display side-by-side XML from source and taget (if present)
@@ -155,25 +149,25 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Merge button handler
-        private void mergeButton_Click(object sender, RoutedEventArgs e)
+        private void MergeButton_Click(object sender, RoutedEventArgs e)
         {
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
-            worker.DoWork += mergeXml;
-            worker.RunWorkerCompleted += mergeXmlCompleted;
+            worker.DoWork += MergeXml;
+            worker.RunWorkerCompleted += MergeXmlCompleted;
             worker.ProgressChanged += mergeXmlProgressChanged;
             progressBar.Visibility = Visibility.Visible;
 
             worker.RunWorkerAsync(); 
         }
 
-        private void mergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void MergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             progressBar.Visibility = Visibility.Hidden;
             MessageBox.Show("Merge Completed");
         }
 
-        void mergeXml(object sender, DoWorkEventArgs e)
+        void MergeXml(object sender, DoWorkEventArgs e)
         {
             xmlHandler.Merge(diffStore, sender);
         }
@@ -183,20 +177,20 @@ namespace Wyndnet.SFDC.ProfileMerge
             progressBar.Value = e.ProgressPercentage;
         }
 
-        private void selectAllCheckboxChecked(object sender, RoutedEventArgs e)
+        private void SelectAllCheckboxChecked(object sender, RoutedEventArgs e)
         {
             dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = true);
-            diffView.Refresh();
+            DiffView.Refresh();
         }
 
         private void selectAllCheckboxUnchecked(object sender, RoutedEventArgs e)
         {
             dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = false);
-            diffView.Refresh();
+            DiffView.Refresh();
         }
 
         // Handle multiple selections
-        private void dataGrid_KeyDown(object sender, KeyEventArgs e)
+        private void DataGrid_KeyDown(object sender, KeyEventArgs e)
         {
             if (sender != null && sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count > 1)
             {
@@ -209,7 +203,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                         change.Merge = !change.Merge;
                     }
 
-                    diffView.Refresh();
+                    DiffView.Refresh();
                 }
             }      
         }

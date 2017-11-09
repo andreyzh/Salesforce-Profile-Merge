@@ -17,6 +17,21 @@ namespace Wyndnet.SFDC.ProfileMerge
             return xmlDocumentWithoutNs.ToString();
         }
 
+        public static string ConvertUnixPathToWindows(string path)
+        {
+            if (String.IsNullOrEmpty(path))
+                return null;
+
+            // Starting with '.' (dot) - strip the dot
+            if (path.StartsWith("."))
+                path = path.Remove(0, 1);
+            
+            // Replace Unix separators with windows
+            path = path.Replace('/','\\');
+
+            return path;
+        }
+
         //Core recursion function
         private static XElement RemoveAllNamespaces(XElement xmlDocument)
         {
@@ -31,6 +46,6 @@ namespace Wyndnet.SFDC.ProfileMerge
                 return xElement;
             }
             return new XElement(xmlDocument.Name.LocalName, xmlDocument.Elements().Select(el => RemoveAllNamespaces(el)));
-        }
+        }  
     }
 }

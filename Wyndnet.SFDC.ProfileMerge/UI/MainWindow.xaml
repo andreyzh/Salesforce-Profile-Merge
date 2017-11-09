@@ -18,10 +18,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="LoadSourceXml" Content="Source File" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
-            <Button Grid.Column="1" Name="LoadTargetXml" Content="Target File" Margin="10" VerticalAlignment="Top" Click="loadButton_Click"/>
-            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="analyseButton_Click_"/>
-            <Button Grid.Column="3" Content="Save Merged" Margin="10" VerticalAlignment="Top" Width="75" Click="mergeButton_Click"/>
+            <Button Grid.Column="0" Name="LoadSourceXml" Content="Source File" Margin="10" VerticalAlignment="Top" Click="LoadButton_Click"/>
+            <Button Grid.Column="1" Name="LoadTargetXml" Content="Target File" Margin="10" VerticalAlignment="Top" Click="LoadButton_Click"/>
+            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="AnalyseButton_Click_"/>
+            <Button Grid.Column="3" Content="Save Merged" Margin="10" VerticalAlignment="Top" Width="75" Click="MergeButton_Click"/>
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
@@ -33,16 +33,16 @@
                 <RowDefinition Height="Auto" MaxHeight="60" />
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showChangesButton" Content="Changes" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75" Click="showChangesButton_Click"/>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showAdditionsButton" Content="Additions" HorizontalAlignment="Left" Margin="90,0,0,0" VerticalAlignment="Top" Width="75" Click="showAdditionsButton_Click"/>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showDeletionsButton" Content="Deletions" HorizontalAlignment="Left" Margin="175,0,0,0" VerticalAlignment="Top" Width="75" Click="showDeletionsButton_Click"/>
-            <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Top" Width="75" Click="showAllButton_Click"/>
-            <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="5,0,5,0" MouseDoubleClick="dataGrid_MouseDoubleClick" KeyDown="dataGrid_KeyDown">
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showChangesButton" Content="Changes" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75" Click="ShowChangesButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showAdditionsButton" Content="Additions" HorizontalAlignment="Left" Margin="90,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowAdditionsButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showDeletionsButton" Content="Deletions" HorizontalAlignment="Left" Margin="175,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowDeletionsButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowAllButton_Click"/>
+            <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="5,0,5,0" MouseDoubleClick="DataGrid_MouseDoubleClick" KeyDown="DataGrid_KeyDown">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Header="Merge" Binding="{Binding Merge}">
                         <DataGridCheckBoxColumn.HeaderTemplate>
                             <DataTemplate>
-                                <CheckBox Name="SelectAll" Content="Merge" Checked="selectAllCheckboxChecked" Unchecked="selectAllCheckboxUnchecked"/>
+                                <CheckBox Name="SelectAll" Content="Merge" Checked="SelectAllCheckboxChecked" Unchecked="selectAllCheckboxUnchecked"/>
                             </DataTemplate>
                         </DataGridCheckBoxColumn.HeaderTemplate>
                     </DataGridCheckBoxColumn>
