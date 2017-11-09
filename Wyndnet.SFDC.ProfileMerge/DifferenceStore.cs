@@ -27,6 +27,11 @@ namespace Wyndnet.SFDC.ProfileMerge
                 OriginElement = originElement,
                 TargetElement = targetElement
             };
+
+            // Pre-select additions and changes
+            if (ChangeType == ChangeType.New || ChangeType == ChangeType.Changed)
+                diff.Merge = true;
+
             diffs.Add(diff);
         }
 

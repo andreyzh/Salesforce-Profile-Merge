@@ -51,8 +51,8 @@
                     <DataGridTextColumn Header="Change type" Binding="{Binding ChangeType}" IsReadOnly="True"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <Label Grid.Column="1" Grid.Row="0" Content="Source XML" HorizontalAlignment="Center"/>
-            <Label Grid.Column="2" Grid.Row="0" Content="Target XML" HorizontalAlignment="Center"/>
+            <Label Grid.Column="1" Grid.Row="0" Content="Local Source" HorizontalAlignment="Center"/>
+            <Label Grid.Column="2" Grid.Row="0" Content="Remote Source" HorizontalAlignment="Center"/>
             <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
                 <TextBox x:Name="textBlock" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
             </Border>
