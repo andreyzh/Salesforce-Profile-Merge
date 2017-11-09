@@ -18,9 +18,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="LoadSourceXml" Content="Source File" Margin="10" VerticalAlignment="Top" Click="LoadButton_Click"/>
-            <Button Grid.Column="1" Name="LoadTargetXml" Content="Target File" Margin="10" VerticalAlignment="Top" Click="LoadButton_Click"/>
-            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" Click="AnalyseButton_Click_"/>
+            <Button Grid.Column="0" Name="LoadSourceXml" Content="Source File" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
+            <Button Grid.Column="1" Name="LoadTargetXml" Content="Target File" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
+            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
             <Button Grid.Column="3" Content="Save Merged" Margin="10" VerticalAlignment="Top" Width="75" Click="MergeButton_Click"/>
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">

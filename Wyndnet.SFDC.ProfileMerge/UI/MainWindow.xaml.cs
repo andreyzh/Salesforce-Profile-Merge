@@ -38,11 +38,24 @@ namespace Wyndnet.SFDC.ProfileMerge
             xmlHandler.ComponentDefinitions = Config.LoadComponentDefinitions();
             xmlHandler.DiffStore = diffStore;
 
-            xmlHandler.LoadXml(Config.Remote, "target");
-            xmlHandler.LoadXml(Config.Local, "source");
+            // Load XMLs in memory
+            xmlHandler.LoadXml(Config.Remote, Config.Source.REMOTE);
+            xmlHandler.LoadXml(Config.Local, Config.Source.LOCAL);
+
+            // Calculate the differences
+            xmlHandler.Analyze();
+
+            // Populate observable collection
+            foreach (Difference change in diffStore.Diffs)
+            {
+                diffs.Add(change);
+            }
+
+            DiffView = CollectionViewSource.GetDefaultView(diffs);
+            dataGrid.ItemsSource = DiffView;
         }
 
-        // Click handler to load source and target XML files
+        /* Click handler to load source and target XML files
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -56,9 +69,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                 if (name == "LoadTargetXml")
                     xmlHandler.LoadXml(openFileDialog.FileName, "target");
             }
-        }
+        }*/
 
-        // Click handler to start analysis of differences
+        /* Click handler to start analysis of differences
         private void AnalyseButton_Click_(object sender, RoutedEventArgs e)
         {
             // Clear diffstore
@@ -77,7 +90,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             DiffView = CollectionViewSource.GetDefaultView(diffs);
             
             dataGrid.ItemsSource = DiffView;
-        }
+        }*/
 
         // Grid element selection handler - displays XML content of nodes
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)

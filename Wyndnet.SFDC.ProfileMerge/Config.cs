@@ -16,6 +16,8 @@ namespace Wyndnet.SFDC.ProfileMerge
         public static string Remote { get; private set; }
         public static string Merged { get; private set; }
 
+        public enum Source {BASE, LOCAL, REMOTE, MERGED}
+
         public static Dictionary<string, string> ComponentDefinitions { get { return componentDefinitions; } }
         static Dictionary<string, string> componentDefinitions = new Dictionary<string, string>();
 

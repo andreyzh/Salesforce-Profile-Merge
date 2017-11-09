@@ -19,30 +19,30 @@ namespace Wyndnet.SFDC.ProfileMerge
         public Dictionary<string, string> ComponentDefinitions { get; set; }
         public DifferenceStore DiffStore { get; set; }
 
-        XDocument sourceDoc;
-        XDocument targetDoc;
+        XDocument local;
+        XDocument remote;
         float mergeProgress;
 
         // Loads XMLs from a given path
-        public void LoadXml(string path, string targetSelection)
+        public void LoadXml(string path, Config.Source source)
         {
-            if(targetSelection == "source")
-                sourceDoc = XDocument.Load(path);
-            if (targetSelection == "target")
-                targetDoc = XDocument.Load(path);
+            if(source == Config.Source.LOCAL)
+                local = XDocument.Load(path);
+            if (source == Config.Source.REMOTE)
+                remote = XDocument.Load(path);
         }
 
         // Analyse differences between the input files, add to diff holder as new or changed
         public void Analyze()
         {
             //FIXME: Temp handler for null results
-            if (sourceDoc == null || targetDoc == null)
+            if (local == null || remote == null)
                 return;
 
-            XNamespace ns = sourceDoc.Root.GetDefaultNamespace();
+            XNamespace ns = local.Root.GetDefaultNamespace();
 
             // Outer loop: Go though all elements in the file
-            foreach (var element in sourceDoc.Root.Elements())
+            foreach (var element in local.Root.Elements())
             {
                 // Inner loop - see if the component name matches
                 foreach(var kvp in ComponentDefinitions)
@@ -68,7 +68,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                         // LocalName is the type e.g. ApplicationVisibilities
                         // SearchTerm is the unqiue name of the component
                         var target =
-                            from el in targetDoc.Root.Elements(ns + localName)
+                            from el in remote.Root.Elements(ns + localName)
                             where (string)el.Element(ns + kvp.Value) == searchTerm
                             select el;
 
@@ -96,7 +96,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Go though all elements, but this time scan for deletions
             // We are now looking at target document and checking if it doen't have something present in source
             //TODO: Refactor as subroutine because here we're mostly copy-pasting upper section
-            foreach (var element in targetDoc.Root.Elements())
+            foreach (var element in remote.Root.Elements())
             {
                 // Inner loop - see if the component name matches
                 foreach (var kvp in ComponentDefinitions)
@@ -120,7 +120,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                         // LocalName is the type e.g. ApplicationVisibilities
                         // SearchTerm is the unqiue name of the component
                         var target =
-                            from el in sourceDoc.Root.Elements(ns + localName)
+                            from el in local.Root.Elements(ns + localName)
                             where (string)el.Element(ns + kvp.Value) == searchTerm
                             select el;
 
@@ -140,7 +140,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             //XMLMerge xmlMerge = new XMLMerge();
 
             // We don't want anything to happen to originals
-            XDocument mergeDoc = new XDocument(targetDoc);
+            XDocument mergeDoc = new XDocument(remote);
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
 
             // Merge marked changed elements
@@ -229,7 +229,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             List<string> values = new List<string>();
 
-            foreach (var type in sourceDoc.Root.Elements())
+            foreach (var type in local.Root.Elements())
             {
                 values.Add(type.Name.LocalName.ToString());
             }
