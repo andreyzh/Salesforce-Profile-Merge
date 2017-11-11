@@ -19,7 +19,10 @@ namespace Wyndnet.SFDC.ProfileMerge
         public enum Source {BASE, LOCAL, REMOTE, MERGED}
 
         public static Dictionary<string, string> ComponentDefinitions { get { return componentDefinitions; } }
+        public static Dictionary<string, string> ComponentTypeFolderMap { get { return componentTypeFolderMap; } }
+
         static Dictionary<string, string> componentDefinitions = new Dictionary<string, string>();
+        static Dictionary<string, string> componentTypeFolderMap = new Dictionary<string, string>();
 
         public static Dictionary<string, string> LoadComponentDefinitions()
         {
@@ -31,12 +34,14 @@ namespace Wyndnet.SFDC.ProfileMerge
                               select new
                               {
                                   type = component.Attribute("type").Value.ToString(),
-                                  name = component.Attribute("name").Value.ToString()
+                                  name = component.Attribute("name").Value.ToString(),
+                                  folder = component.Attribute("folder").Value.ToString() //?? string.Empty
                               };
 
                 foreach(var result in results)
                 {
                     componentDefinitions.Add(result.type, result.name);
+                    componentTypeFolderMap.Add(result.type, result.folder);
                 }
             }
             catch(IOException ex)
