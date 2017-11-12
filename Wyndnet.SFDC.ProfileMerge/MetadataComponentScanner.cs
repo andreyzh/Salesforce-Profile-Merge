@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,34 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         public DifferenceStore Scan(DifferenceStore diffStore)
         {
-            throw new NotImplementedException();
+            // DiffStore Contains what we need to check for. Now we need to get some deletions
+            var deletionDiffs = diffStore.Diffs.Where(deleted => deleted.ChangeType == DifferenceStore.ChangeType.Deleted);
+            List<string> types = new List<string>();
+
+            // Get the types of the deletions
+            foreach(var del in deletionDiffs)
+            {
+                if (!types.Contains(del.ElementType))
+                    types.Add(del.ElementType);
+            }
+
+            // Store list of paths to scan
+            List<string> paths = new List<string>();
+            foreach(string type in types)
+            {
+                Config.ComponentFolderMap.TryGetValue(type, out string pth);
+                if(!String.IsNullOrEmpty(pth))
+                    paths.Add(Environment.CurrentDirectory + "\\src\\" + pth);
+            }
+
+            Dictionary<string, string> componentTypeMap = new Dictionary<string, string>();
+            foreach(var path in paths)
+            {
+                var filenames = Directory.GetFiles(path);
+                // How to we now know which type are we getting for?
+            }
+
+            return diffStore;
         }
     }
 }

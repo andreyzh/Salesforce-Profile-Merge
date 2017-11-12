@@ -45,6 +45,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Calculate the differences
             xmlHandler.Analyze();
 
+            // TEMP: Deletions work
+            MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
+            scanner.Scan(diffStore);
+
             // Populate observable collection
             foreach (Difference change in diffStore.Diffs)
             {
