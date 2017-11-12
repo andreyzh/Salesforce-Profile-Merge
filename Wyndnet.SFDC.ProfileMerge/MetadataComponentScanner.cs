@@ -38,14 +38,21 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             // Store list of paths to scan
             List<string> paths = new List<string>();
-            foreach(string type in types)
+            //TODO: We're getting too many entries which we don't need - meta.xml definitions
+            Dictionary<string, List<string>> componentTypeMap = new Dictionary<string, List<string>>();
+            foreach (string type in types)
             {
+                string path;
                 Config.ComponentFolderMap.TryGetValue(type, out string pth);
                 if(!String.IsNullOrEmpty(pth))
-                    paths.Add(Environment.CurrentDirectory + "\\src\\" + pth);
+                { 
+                    path = Environment.CurrentDirectory + "\\src\\" + pth;
+                    //TODO: this needs to be wrapped
+                    List<string> filenames = Directory.GetFiles(path).ToList<string>();
+                    componentTypeMap.Add(type, filenames);
+                }
             }
-
-            Dictionary<string, string> componentTypeMap = new Dictionary<string, string>();
+            
             foreach(var path in paths)
             {
                 var filenames = Directory.GetFiles(path);
