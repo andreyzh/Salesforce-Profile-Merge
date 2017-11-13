@@ -55,12 +55,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IComponentScaner.cs" />
+    <Compile Include="InnerXmlComponentScanner.cs" />
     <Compile Include="MetadataComponentScanner.cs" />
     <Compile Include="UI\StartWindow.xaml.cs">
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="XMLHander.cs" />
+    <Compile Include="XMLObjectHandler.cs" />
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

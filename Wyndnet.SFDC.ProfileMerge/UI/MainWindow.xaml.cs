@@ -47,7 +47,10 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             // TEMP: Deletions work
             MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
+            InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
+
             scanner.Scan(diffStore);
+            scanner1.Scan(diffStore);
 
             // Populate observable collection
             foreach (Difference change in diffStore.Diffs)

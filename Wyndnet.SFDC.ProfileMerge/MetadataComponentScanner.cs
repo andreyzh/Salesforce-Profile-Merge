@@ -15,13 +15,13 @@ namespace Wyndnet.SFDC.ProfileMerge
     class MetadataComponentScanner : IComponentScaner
     {
         // Key is type e.g. apexclass, value is name e.g. Utils
-        Dictionary<string, string> components;
+        //Dictionary<string, string> components;
         string projectPath = null;
 
         public MetadataComponentScanner(string projectPath)
         {
             this.projectPath = projectPath;
-            components = new Dictionary<string, string>();
+            //components = new Dictionary<string, string>();
         }
 
         public DifferenceStore Scan(DifferenceStore diffStore)
@@ -41,6 +41,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             // Store list of paths to scan
             List<string> paths = new List<string>();
+            // Component type - list of components of the type
             Dictionary<string, List<string>> componentTypeMap = new Dictionary<string, List<string>>();
 
             foreach (string type in types)

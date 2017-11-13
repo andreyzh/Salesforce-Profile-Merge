@@ -45,6 +45,11 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 get { return getComponentName(); }
             }
+            public string ParentObject
+            {
+                get { return getParentObject(); }
+            }
+
             public ChangeType ChangeType { get; set;}
             // Type of the element as declared in metadata file
             public string ElementType { get; set; }
@@ -65,6 +70,18 @@ namespace Wyndnet.SFDC.ProfileMerge
                     select el;
 
                 return target.Single().Value;
+            }
+
+            private string getParentObject()
+            {
+                if (ElementType == "fieldPermissions" || ElementType == "recordTypeVisibilities")
+                {
+                    string componentName = getComponentName();
+                    char delimiter = '.';
+                    return componentName.Split(delimiter)[0];
+                }
+                else
+                    return null;
             }
         }
 
