@@ -39,7 +39,17 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 if(element.Name.LocalName == "fields")
                 {
-                    //element.Elements
+                    var field =
+                            from el in element.Elements()
+                            where el.Name.LocalName == "fullName"
+                            select el;
+
+                    if(field.Count() > 0)
+                    {
+                        XElement result = field.Single();
+                        obj.Fields.Add(result.Value.ToString());
+                    }
+                    
                 }
             }
         }
@@ -47,8 +57,10 @@ namespace Wyndnet.SFDC.ProfileMerge
         internal class SObject
         {
             public string Name { get; set; } 
-            List<string> Fields { get; set; }
-            List<string> RecordTypes { get; set; }
+            public List<string> Fields { get { return fields; } }
+            public List<string> RecordTypes { get; set; }
+
+            private List<string> fields = new List<string>();
         }
     }
 }
