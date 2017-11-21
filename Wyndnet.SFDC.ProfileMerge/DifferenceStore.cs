@@ -47,7 +47,11 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
             public string ParentObject
             {
-                get { return getParentObject(); }
+                get { return GetParentObject(); }
+            }
+            public string FieldName
+            {
+                get { return GetFieldName(); }
             }
 
             public ChangeType ChangeType { get; set;}
@@ -72,13 +76,25 @@ namespace Wyndnet.SFDC.ProfileMerge
                 return target.Single().Value;
             }
 
-            private string getParentObject()
+            private string GetParentObject()
             {
                 if (ElementType == "fieldPermissions" || ElementType == "recordTypeVisibilities")
                 {
                     string componentName = getComponentName();
                     char delimiter = '.';
                     return componentName.Split(delimiter)[0];
+                }
+                else
+                    return null;
+            }
+
+            private string GetFieldName()
+            {
+                if (ElementType == "fieldPermissions" || ElementType == "recordTypeVisibilities")
+                {
+                    string componentName = getComponentName();
+                    char delimiter = '.';
+                    return componentName.Split(delimiter)[1];
                 }
                 else
                     return null;

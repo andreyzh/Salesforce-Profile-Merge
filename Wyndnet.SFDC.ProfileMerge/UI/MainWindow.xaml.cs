@@ -150,6 +150,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Display side-by-side XML from source and taget (if present)
+        // TODO: Needs to be refactored
         private void DisplayDifference(DifferenceStore.Difference change)
         {
             // Clear blocks

@@ -47,7 +47,23 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                 handler.Analyze(path);
 
-                break;
+                //break;
+            }
+
+            foreach(var candidate in candidates)
+            {
+                var obj = handler.Objects.Find(o => o.Name == candidate.ParentObject);
+
+                // Field marked as addition and is present in metadata - must be a valid addition
+                if(obj.Fields.Contains(candidate.FieldName) && candidate.ChangeType == DifferenceStore.ChangeType.New)
+                {
+                    candidate.Merge = true;
+                }
+                // Field marked as deletion and not present in metadada - must be a valid deletion
+                else if(!obj.Fields.Contains(candidate.FieldName) && candidate.ChangeType == DifferenceStore.ChangeType.Deleted)
+                {
+                    candidate.Merge = true;
+                }
             }
 
             return diffStore;

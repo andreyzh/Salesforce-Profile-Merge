@@ -29,8 +29,10 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             List<string> results = new List<string>();
 
-            SObject obj = new SObject();
-            obj.Name = Path.GetFileNameWithoutExtension(path);
+            SObject obj = new SObject
+            {
+                Name = Path.GetFileNameWithoutExtension(path)
+            };
 
             XNamespace ns = customObject.Root.GetDefaultNamespace();
 
@@ -52,6 +54,8 @@ namespace Wyndnet.SFDC.ProfileMerge
                     
                 }
             }
+
+            objects.Add(obj);
         }
 
         internal class SObject

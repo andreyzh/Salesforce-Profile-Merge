@@ -86,6 +86,12 @@ namespace Wyndnet.SFDC.ProfileMerge
                     {
                         change.Merge = true;
                     }
+                    // Present in REMOTE and absent in LOCAL, present in filesystem of type deletion = must be an addition :)
+                    if(components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.Deleted)
+                    {
+                        change.Merge = true;
+                        change.ChangeType = DifferenceStore.ChangeType.New;
+                    }
                     // Absent in LOCAL and present in REMOTE, however not present in filesystem. Must be a valid deletion
                     else if(!components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.Deleted)
                         change.Merge = true;
