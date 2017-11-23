@@ -20,10 +20,17 @@ namespace Wyndnet.SFDC.ProfileMerge
         // Add differing element
         public void Add(XElement originElement, XElement targetElement, ChangeType ChangeType)
         {
+            string type = null;
+            // We don't really care which type we set as if this is a change they'll be equal
+            if (originElement != null)
+                type = originElement.Name.LocalName.ToString();
+            else
+                type = targetElement.Name.LocalName.ToString();
+
             Difference diff = new Difference()
             {
                 ChangeType = ChangeType,
-                ElementType = originElement.Name.LocalName.ToString(),
+                ElementType = type,
                 OriginElement = originElement,
                 TargetElement = targetElement
             };
@@ -69,14 +76,16 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Get the name of the component e.g. name of class or sObject
             private string GetComponentName()
             {
-                if (OriginElement == null)
+                XElement element = GetXElement();
+
+                if (element == null)
                     return null;
 
-                XNamespace ns = OriginElement.Document.Root.GetDefaultNamespace();//doc.Root.GetDefaultNamespace();
+                XNamespace ns = element.Document.Root.GetDefaultNamespace();//doc.Root.GetDefaultNamespace();
                 string value = Config.ComponentDefinitions[ElementType];
 
                 var target =
-                    from el in OriginElement.Elements(ns + value)
+                    from el in element.Elements(ns + value)
                     select el;
 
                 return target.Single().Value;
@@ -104,6 +113,14 @@ namespace Wyndnet.SFDC.ProfileMerge
                 }
                 else
                     return null;
+            }
+
+            private XElement GetXElement()
+            {
+                if (OriginElement != null)
+                    return OriginElement;
+                else
+                    return TargetElement;
             }
         }
 
