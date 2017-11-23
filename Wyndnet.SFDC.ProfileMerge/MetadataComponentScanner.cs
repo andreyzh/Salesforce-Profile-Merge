@@ -75,13 +75,25 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
             
             // Check which referenced components are not present as metadata
+            // TODO: can refactor since we're only looking for additions
             foreach(var change in candidates)
             {
                 componentTypeMap.TryGetValue(change.ElementType, out List<string> components);
 
                 if(components != null)
                 {
-                    // Present in REMOTE and absent in LOCAL, however present in the filesystem - must be valid addition
+                    // Addition type difference between two files, and present in repository - must be valid addition
+                    if (components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.New)
+                        change.Merge = true;
+
+                    // Addition type difference between two files, however not present in repository - must be a deletion
+                    else if (!components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.New)
+                    {
+                        change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                        change.Merge = true;
+                    }
+
+                    /* Present in REMOTE and absent in LOCAL, however present in the filesystem - must be valid addition
                     if (components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.New)
                     {
                         change.Merge = true;
@@ -94,7 +106,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
                     // Absent in LOCAL and present in REMOTE, however not present in filesystem. Must be a valid deletion
                     else if(!components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.Deleted)
-                        change.Merge = true;
+                        change.Merge = true;*/
                 }
             }
 
