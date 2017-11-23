@@ -54,10 +54,10 @@
             <Label Grid.Column="1" Grid.Row="0" Content="Local Source" HorizontalAlignment="Center"/>
             <Label Grid.Column="2" Grid.Row="0" Content="Remote Source" HorizontalAlignment="Center"/>
             <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
-                <TextBox x:Name="textBlock" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
+                <TextBox x:Name="textBlock_Local" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
             </Border>
             <Border Grid.Column="2" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
-                <TextBox x:Name="textBlock_Copy" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
+                <TextBox x:Name="textBlock_Remote" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
             </Border>
         </Grid>
         <ProgressBar Minimum="0" Maximum="100" Visibility="Hidden" Name="progressBar" />

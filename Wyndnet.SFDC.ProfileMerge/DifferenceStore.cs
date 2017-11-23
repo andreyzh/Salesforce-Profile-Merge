@@ -43,7 +43,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Name of the element e.g. apex class name
             public string Name
             {
-                get { return getComponentName(); }
+                get { return GetComponentName(); }
             }
             public string ParentObject
             {
@@ -57,11 +57,17 @@ namespace Wyndnet.SFDC.ProfileMerge
             public ChangeType ChangeType { get; set;}
             // Type of the element as declared in metadata file
             public string ElementType { get; set; }
+            /// <summary>
+            /// XML Change node of the local version
+            /// </summary>
             public XElement OriginElement { get; set; }
+            /// <summary>
+            /// XML Change node of the remote version
+            /// </summary>
             public XElement TargetElement { get; set; }
 
             // Get the name of the component e.g. name of class or sObject
-            private string getComponentName()
+            private string GetComponentName()
             {
                 if (OriginElement == null)
                     return null;
@@ -80,7 +86,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 if (ElementType == "fieldPermissions" || ElementType == "recordTypeVisibilities")
                 {
-                    string componentName = getComponentName();
+                    string componentName = GetComponentName();
                     char delimiter = '.';
                     return componentName.Split(delimiter)[0];
                 }
@@ -92,7 +98,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 if (ElementType == "fieldPermissions" || ElementType == "recordTypeVisibilities")
                 {
-                    string componentName = getComponentName();
+                    string componentName = GetComponentName();
                     char delimiter = '.';
                     return componentName.Split(delimiter)[1];
                 }

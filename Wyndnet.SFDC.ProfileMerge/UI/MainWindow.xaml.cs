@@ -154,19 +154,30 @@ namespace Wyndnet.SFDC.ProfileMerge
         private void DisplayDifference(DifferenceStore.Difference change)
         {
             // Clear blocks
-            textBlock.Text = "";
-            textBlock_Copy.Text = "";
+            textBlock_Local.Text = "";
+            textBlock_Remote.Text = "";
 
+            if (change.OriginElement != null)
+                textBlock_Local.Text = change.OriginElement.ToString();
+            else
+                textBlock_Local.Text = "None";
+            if (change.TargetElement != null)
+                textBlock_Remote.Text = change.TargetElement.ToString();
+            else
+                textBlock_Remote.Text = "None";
+
+            /*
             if(change.ChangeType != ChangeType.Deleted)
-                textBlock.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
+                textBlock_Local.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
             else
             {
-                textBlock.Text = "Deleted";
-                textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
+                textBlock_Local.Text = "Deleted";
+                textBlock_Remote.Text = Utils.RemoveAllNamespaces(change.OriginElement.ToString());
             }
             // For new items - don't display target
             if (change.TargetElement != null)
-                textBlock_Copy.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());
+                textBlock_Remote.Text = Utils.RemoveAllNamespaces(change.TargetElement.ToString());
+            */
         }
 
         // Merge button handler
