@@ -39,18 +39,19 @@
             <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowAllButton_Click"/>
             <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="5,0,5,0" MouseDoubleClick="DataGrid_MouseDoubleClick" KeyDown="DataGrid_KeyDown">
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Header="Merge" Binding="{Binding Merge}">
+                    <DataGridCheckBoxColumn Header="Merge" Width="1*" Binding="{Binding Merge}">
                         <DataGridCheckBoxColumn.HeaderTemplate>
                             <DataTemplate>
                                 <CheckBox Name="SelectAll" Content="Merge" Checked="SelectAllCheckboxChecked" Unchecked="selectAllCheckboxUnchecked"/>
                             </DataTemplate>
                         </DataGridCheckBoxColumn.HeaderTemplate>
                     </DataGridCheckBoxColumn>
-                    <DataGridTextColumn Header="Element type" Binding="{Binding ElementType}" IsReadOnly="True"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Element name" Binding="{Binding Name}" IsReadOnly="True"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Change type" Binding="{Binding ChangeType}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Element type" Width="2*" Binding="{Binding ElementType}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Element name" Width="4*" Binding="{Binding Name}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Change type" Width="1*" Binding="{Binding ChangeType}" IsReadOnly="True"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
+            <GridSplitter Grid.Column="0" Grid.Row="1" Width="5" Height="auto"/>
             <Label Grid.Column="1" Grid.Row="0" Content="Local Source" HorizontalAlignment="Center"/>
             <Label Grid.Column="2" Grid.Row="0" Content="Remote Source" HorizontalAlignment="Center"/>
             <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
