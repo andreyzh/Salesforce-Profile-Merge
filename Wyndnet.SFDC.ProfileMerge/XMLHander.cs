@@ -135,7 +135,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Merge marked changes
-        public void Merge(DifferenceStore diffStore, object sender)
+        public void Merge(DifferenceStore diffStore, string path, object sender)
         {
             //XMLMerge xmlMerge = new XMLMerge();
 
@@ -211,13 +211,15 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
                 }
             }
-            
 
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Encoding = new UTF8Encoding(false);
-            settings.Indent = true;
-            settings.IndentChars = "    ";
-            settings.NewLineChars = "\n";
+
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Encoding = new UTF8Encoding(false),
+                Indent = true,
+                IndentChars = "    ",
+                NewLineChars = "\n"
+            };
 
             using (var writer = XmlWriter.Create("merged.xml", settings))
             {

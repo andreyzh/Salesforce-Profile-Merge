@@ -190,7 +190,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         void MergeXml(object sender, DoWorkEventArgs e)
         {
-            xmlHandler.Merge(diffStore, sender);
+            xmlHandler.Merge(diffStore, Config.Merged, sender);
         }
 
         void mergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
