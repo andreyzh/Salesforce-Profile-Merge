@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Wyndnet.SFDC.ProfileMerge
@@ -113,8 +111,6 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
                 }
             }
-
-
 
             return diffStore;
         }

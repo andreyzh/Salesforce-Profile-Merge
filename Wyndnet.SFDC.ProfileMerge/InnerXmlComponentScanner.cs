@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Wyndnet.SFDC.ProfileMerge
 {
@@ -51,7 +47,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             var local = DifferenceStore.ChangeSource.Local;
             var remote = DifferenceStore.ChangeSource.Remote;
 
-            foreach (var change in candidates.Where(c => c.ChangeType == DifferenceStore.ChangeType.New))
+            foreach (var change in candidates)
             {
                 var obj = handler.Objects.Find(o => o.Name == change.ParentObject);
 
