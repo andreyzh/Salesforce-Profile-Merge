@@ -27,7 +27,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Our candidates are new or deleted objects which refer to parent object
             var candidates = diffStore.Diffs.Where(
                 candidate =>
-                ((candidate.ChangeType == DifferenceStore.ChangeType.Deleted || candidate.ChangeType == DifferenceStore.ChangeType.New)
+                ((candidate.ChangeType == DifferenceStore.ChangeType.New)
                 && candidate.ParentObject != null
                 ));
 
@@ -46,23 +46,41 @@ namespace Wyndnet.SFDC.ProfileMerge
                 string path = Environment.CurrentDirectory + "\\src\\objects\\" + obj + ".object";
 
                 handler.Analyze(path);
-
-                //break;
             }
 
-            foreach(var candidate in candidates)
-            {
-                var obj = handler.Objects.Find(o => o.Name == candidate.ParentObject);
+            var local = DifferenceStore.ChangeSource.Local;
+            var remote = DifferenceStore.ChangeSource.Remote;
 
-                // Field marked as addition and is present in metadata - must be a valid addition
-                if(obj.Fields.Contains(candidate.FieldName) && candidate.ChangeType == DifferenceStore.ChangeType.New)
+            foreach (var change in candidates.Where(c => c.ChangeType == DifferenceStore.ChangeType.New))
+            {
+                var obj = handler.Objects.Find(o => o.Name == change.ParentObject);
+
+                // CASE 3
+                if(obj.Fields.Contains(change.FieldName) && change.ChangeSource == local)
                 {
-                    candidate.Merge = true;
+                    change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                    change.Merge = false;
                 }
-                // Field marked as deletion and not present in metadada - must be a valid deletion
-                else if(!obj.Fields.Contains(candidate.FieldName) && candidate.ChangeType == DifferenceStore.ChangeType.Deleted)
+
+                // CASE 4
+                else if(!obj.Fields.Contains(change.FieldName) && change.ChangeSource == local)
                 {
-                    candidate.Merge = true;
+                    change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                    change.Merge = true;
+                }
+
+                // CASE 5
+                if (obj.Fields.Contains(change.FieldName) && change.ChangeSource == remote)
+                {
+                    change.ChangeType = DifferenceStore.ChangeType.New;
+                    change.Merge = true;
+                }
+
+                // CASE 6
+                else if (!obj.Fields.Contains(change.FieldName) && change.ChangeSource == remote)
+                {
+                    change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                    change.Merge = false;
                 }
             }
 

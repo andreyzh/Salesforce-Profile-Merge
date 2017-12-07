@@ -50,7 +50,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
 
             scanner.Scan(diffStore);
-            scanner1.Scan(diffStore);
+            //scanner1.Scan(diffStore);
 
             // Populate observable collection
             foreach (Difference change in diffStore.Diffs)

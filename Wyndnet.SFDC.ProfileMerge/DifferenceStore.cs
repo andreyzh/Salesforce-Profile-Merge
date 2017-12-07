@@ -62,6 +62,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
 
             public ChangeType ChangeType { get; set;}
+            public ChangeSource ChangeSource
+            {
+                get { return GetChangeSource(); }
+            }
             // Type of the element as declared in metadata file
             public string ElementType { get; set; }
             /// <summary>
@@ -103,6 +107,16 @@ namespace Wyndnet.SFDC.ProfileMerge
                     return null;
             }
 
+            private ChangeSource GetChangeSource()
+            {
+                if (OriginElement == null && TargetElement != null)
+                    return ChangeSource.Remote;
+                if (OriginElement != null && TargetElement == null)
+                    return ChangeSource.Local;
+                else
+                    return ChangeSource.None;
+            }
+
             private string GetFieldName()
             {
                 if (ElementType == "fieldPermissions" || ElementType == "recordTypeVisibilities")
@@ -131,6 +145,12 @@ namespace Wyndnet.SFDC.ProfileMerge
             New,
             Changed,
             Deleted
+        }
+        public enum ChangeSource
+        {
+            None,
+            Local,
+            Remote
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         public DifferenceStore Scan(DifferenceStore diffStore)
         {
             // DiffStore Contains what we need to check for. Now we need to get some deletions and additions
-            var candidates = diffStore.Diffs.Where(candidate => (candidate.ChangeType == DifferenceStore.ChangeType.Deleted || candidate.ChangeType == DifferenceStore.ChangeType.New));
+            var candidates = diffStore.Diffs.Where(candidate => (candidate.ChangeType == DifferenceStore.ChangeType.New));
             //var additionDiffs = diffStore.Diffs.Where(added => added.ChangeType == DifferenceStore.ChangeType.New);
 
             List<string> types = new List<string>();
@@ -73,62 +73,83 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
                 }
             }
-            
+
+            var local = DifferenceStore.ChangeSource.Local;
+            var remote = DifferenceStore.ChangeSource.Remote;
+
             // Check which referenced components are not present as metadata
-            // TODO: can refactor since we're only looking for additions
-            foreach(var change in candidates)
+            foreach (var change in candidates)
             {
                 componentTypeMap.TryGetValue(change.ElementType, out List<string> components);
 
-                if(components != null)
+                if (components != null)
                 {
-                    // Addition type difference between two files, and present in repository - must be valid addition
-                    if (components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.New)
-                        change.Merge = true;
+                    // CASE 3
+                    if (components.Contains(change.Name) && change.ChangeSource == local)
+                    {
+                        change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                        change.Merge = false;
+                    }
 
-                    // Addition type difference between two files, however not present in repository - must be a deletion
-                    else if (!components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.New)
+                    // CASE 4
+                    else if (!components.Contains(change.Name) && change.ChangeSource == local)
                     {
                         change.ChangeType = DifferenceStore.ChangeType.Deleted;
                         change.Merge = true;
                     }
 
-                    /* Present in REMOTE and absent in LOCAL, however present in the filesystem - must be valid addition
-                    if (components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.New)
+                    // CASE 5
+                    else if (components.Contains(change.Name) && change.ChangeSource == remote)
                     {
-                        change.Merge = true;
-                    }
-                    // Present in REMOTE and absent in LOCAL, present in filesystem of type deletion = must be an addition :)
-                    if(components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.Deleted)
-                    {
-                        change.Merge = true;
                         change.ChangeType = DifferenceStore.ChangeType.New;
+                        change.Merge = true;
                     }
-                    // Absent in LOCAL and present in REMOTE, however not present in filesystem. Must be a valid deletion
-                    else if(!components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.Deleted)
-                        change.Merge = true;*/
+
+                    // CASE 6
+                    else if (!components.Contains(change.Name) && change.ChangeSource == remote)
+                    {
+                        change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                        change.Merge = false;
+                    }
                 }
             }
 
-            /* Check which additions are valid
-            foreach (var add in additionDiffs)
-            {
-                componentTypeMap.TryGetValue(add.ElementType, out List<string> components);
 
-                if (components != null)
-                {
-                    // This means that our addition candidate is present in actual metadata, so it's valid
-                    if (components.Contains(add.Name))
-                    {
-                        //MessageBox.Show("Bingo! Deletion " + del.Name + " is not a deletion :)");
-                    }
-                    // Not found - most likely was deleted
-                    else
-                        add.Merge = false;
-                }
-            }*/
 
             return diffStore;
         }
     }
 }
+
+/* Present in REMOTE and absent in LOCAL, however present in the filesystem - must be valid addition
+if (components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.New)
+{
+    change.Merge = true;
+}
+// Present in REMOTE and absent in LOCAL, present in filesystem of type deletion = must be an addition :)
+if(components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.Deleted)
+{
+    change.Merge = true;
+    change.ChangeType = DifferenceStore.ChangeType.New;
+}
+// Absent in LOCAL and present in REMOTE, however not present in filesystem. Must be a valid deletion
+else if(!components.Contains(change.Name) && change.ChangeType == DifferenceStore.ChangeType.Deleted)
+    change.Merge = true;*/
+
+/* Check which additions are valid
+foreach (var add in additionDiffs)
+{
+componentTypeMap.TryGetValue(add.ElementType, out List<string> components);
+
+if (components != null)
+{
+    // This means that our addition candidate is present in actual metadata, so it's valid
+    if (components.Contains(add.Name))
+    {
+        //MessageBox.Show("Bingo! Deletion " + del.Name + " is not a deletion :)");
+    }
+    // Not found - most likely was deleted
+    else
+        add.Merge = false;
+}
+}*/
