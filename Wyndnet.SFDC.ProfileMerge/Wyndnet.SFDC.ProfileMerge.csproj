@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="XMLHander.cs" />
+    <Compile Include="XMLMergeHandler.cs" />
     <Compile Include="XMLObjectHandler.cs" />
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

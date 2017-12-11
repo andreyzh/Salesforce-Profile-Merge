@@ -176,10 +176,21 @@ namespace Wyndnet.SFDC.ProfileMerge
             worker.WorkerReportsProgress = true;
             worker.DoWork += MergeXml;
             worker.RunWorkerCompleted += MergeXmlCompleted;
-            worker.ProgressChanged += mergeXmlProgressChanged;
+            worker.ProgressChanged += MergeXmlProgressChanged;
             progressBar.Visibility = Visibility.Visible;
 
             worker.RunWorkerAsync(); 
+        }
+
+        // FIXME: Temporary merge handler
+        private void MergeButton_Click1(object sender, RoutedEventArgs e)
+        {
+            XMLMergeHandler mergeHandler = new XMLMergeHandler();
+            // FIXME: refactor this access pornography
+            mergeHandler.Remote = xmlHandler.remote;
+            mergeHandler.Local = xmlHandler.local;
+
+            mergeHandler.Merge(diffStore, "path", sender);
         }
 
         private void MergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -193,18 +204,19 @@ namespace Wyndnet.SFDC.ProfileMerge
             xmlHandler.Merge(diffStore, Config.Merged, sender);
         }
 
-        void mergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
+        void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar.Value = e.ProgressPercentage;
         }
 
+#region DataGrid UI Controls
         private void SelectAllCheckboxChecked(object sender, RoutedEventArgs e)
         {
             dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = true);
             DiffView.Refresh();
         }
 
-        private void selectAllCheckboxUnchecked(object sender, RoutedEventArgs e)
+        private void SelectAllCheckboxUnchecked(object sender, RoutedEventArgs e)
         {
             dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = false);
             DiffView.Refresh();
@@ -229,6 +241,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             }      
         }
     }
+#endregion
 }
 
 /*

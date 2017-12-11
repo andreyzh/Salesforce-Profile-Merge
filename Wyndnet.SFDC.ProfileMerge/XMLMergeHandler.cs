@@ -1,0 +1,142 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace Wyndnet.SFDC.ProfileMerge
+{
+    /// <summary>
+    /// Handles merging of selected changes into the merge (local) file version
+    /// </summary>
+    class XMLMergeHandler
+    {
+        public XDocument Local { get; set; }
+        public XDocument Remote { get; set; }
+
+        float mergeProgress;
+
+        public void Merge(DifferenceStore diffStore, string path, object sender)
+        {
+            // Make a list of diffs that we're going to work with - those marked for merge
+            //List<DifferenceStore.Difference> diffsToMerge = (List < DifferenceStore.Difference > )diffStore.Diffs.Where(d => d.Merge == true);
+
+            // Make a copy of the LOCAL XML - we will be merging into that one
+            XDocument mergeDoc = new XDocument(Local);
+            XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
+
+            // STAGE 1 - Merge selected changes
+            foreach (DifferenceStore.Difference change in diffStore.Diffs.Where(chg => chg.ChangeType == DifferenceStore.ChangeType.Changed && chg.Merge))
+            {
+                var replacementTarget =
+                            from el in mergeDoc.Root.Elements(ns + change.ElementType)
+                            where (string)el.Element(ns + Config.ComponentDefinitions[change.ElementType]) == change.Name
+                            select el;
+
+                // Single() method already covers for cases when there would be more than one element
+                XElement replacementTargetElement = replacementTarget.Single();
+
+                replacementTargetElement.ReplaceWith(change.OriginElement);
+            }
+
+            // STAGE 2 - Remove elements marked for deletion
+            // Merge marked deleted elements
+            foreach (DifferenceStore.Difference change in diffStore.Diffs.Where(chg => chg.ChangeType == DifferenceStore.ChangeType.Deleted && chg.Merge))
+            {
+                var replacementTarget =
+                            from el in mergeDoc.Root.Elements(ns + change.ElementType)
+                            where (string)el.Element(ns + Config.ComponentDefinitions[change.ElementType]) == change.Name
+                            select el;
+
+                XElement replacementTargetElement = replacementTarget.Single();
+
+                replacementTargetElement.Remove();
+            }
+
+            // STAGE 3 - Add new elements
+            // Get all additions to the new list
+            List<DifferenceStore.Difference> additions = new List<DifferenceStore.Difference>();
+
+            foreach (DifferenceStore.Difference change in diffStore.Diffs.Where(chg => chg.ChangeType == DifferenceStore.ChangeType.New && chg.Merge))
+            {
+                additions.Add(change);
+            }
+
+            float additionsSum = additions.Count;
+
+            // We should continue this exercise until we're done with all additions
+            while (additions.Count != 0)
+            {
+                // Iterate though remaining changes
+                foreach (var addition in additions.ToList())
+                {
+                    // Find previous node our change from remote in local. 
+                    // We're looking only at target element for now since addition is incoming from remote.
+                    var previousNode =
+                        from el in mergeDoc.Root.Elements()
+                        where XNode.DeepEquals(el, addition.TargetElement.PreviousNode)
+                        select el;
+
+                    // Stage 1 - previous node found
+                    if (previousNode != null)
+                    {
+                        var node = previousNode.Single();
+                        if (node != null)
+                        {
+                            // Insert after
+                            node.AddAfterSelf(addition.OriginElement);
+                            // Remove our addition since we have processed it and continue
+                            additions.Remove(addition);
+                            continue;
+                        }
+                    }
+
+                    // No luck - previous known node was not found. Let's look for the next one
+                    var nextNode =
+                        from el in mergeDoc.Root.Elements()
+                        where XNode.DeepEquals(el, addition.TargetElement.NextNode)
+                        select el;
+
+                    // Stage 2 - next node found
+                    if (nextNode != null)
+                    {
+                        var node = nextNode.Single();
+                        if (node != null)
+                        {
+                            // Insert before
+                            node.AddBeforeSelf(addition.OriginElement);
+                            // Remove our addition since we have processed it and continue
+                            additions.Remove(addition);
+                            continue;
+                        }
+                    }
+
+                    // Stage 3 - here things are starting to get complicated and we have to revert to the alphabetical sorting
+
+                }
+            }
+        }
+
+        private string GetPreviousElementName(List<string> nodeNames, string additionName)
+        {
+            // Adding element we're trying to insert to list of names and sorting it
+            nodeNames.Add(additionName);
+            nodeNames.Sort();
+
+            /* Check the position of our addition.
+             * If it happens to be 0 it means it's the first element of the collection 
+             * If it's >0, we found a suitable previous node to insert after (in most cases)
+             * 
+             * This will not work 100% according to SalesForce, because they're using different sorting logic,
+             * however this is good enough.
+            */
+            int index = nodeNames.IndexOf(additionName);
+
+            if (index == 0)
+                return null;
+            else
+                return nodeNames[nodeNames.IndexOf(additionName) - 1];
+        }
+    }
+}

@@ -17,8 +17,9 @@ namespace Wyndnet.SFDC.ProfileMerge
         public Dictionary<string, string> ComponentDefinitions { get; set; }
         public DifferenceStore DiffStore { get; set; }
 
-        XDocument local;
-        XDocument remote;
+        // FIXME: remove public property
+        public XDocument local { get; private set; }
+        public XDocument remote { get; private set; }
         float mergeProgress;
 
         // Loads XMLs from a given path
@@ -194,8 +195,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                     // Previous node was found - insert after
                     if(previousNode != null)
                     {
-                        //FIXME - are we sure it's unique and first result
-                        var node = previousNode.FirstOrDefault();
+                        var node = previousNode.Single();
                         if (node != null)
                         {
                             node.AddAfterSelf(addition.OriginElement);
