@@ -41,9 +41,13 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         internal class Difference
         {
-            // Indidates whether or not change needs to be merged
+            /// <summary>
+            /// True if change needs to be merged
+            /// </summary>
             public bool Merge { get; set; }
-            // Name of the element e.g. apex class name
+            /// <summary>
+            /// API Name of the element
+            /// </summary>
             public string Name
             {
                 get { return GetComponentName(); }
@@ -62,7 +66,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 get { return GetChangeSource(); }
             }
-            // Type of the element as declared in metadata file
+            /// <summary>
+            /// Type of the element as declared in metadata file.
+            /// E.G. ApexClass or FieldPermission
+            /// </summary>
             public string ElementType { get; set; }
             /// <summary>
             /// XML Change node of the local version
@@ -142,6 +149,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             Changed,
             Deleted
         }
+        // Tells if the diff is from local or remote branch
         public enum ChangeSource
         {
             None,
