@@ -6,10 +6,16 @@ using System.Xml.Linq;
 
 namespace Wyndnet.SFDC.ProfileMerge
 {
+    /// <summary>
+    /// This class will parse Salesforce .object files
+    /// </summary>
     class XMLObjectHandler
     {
         XDocument customObject;
 
+        /// <summary>
+        /// Returns list of SalesForce objects with fields and record types
+        /// </summary>
         public List<SObject> Objects { get { return objects; } }
 
         List<SObject> objects = new List<SObject>();
@@ -20,6 +26,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             
         }
 
+        /// <summary>
+        /// Parse .object file
+        /// </summary>
+        /// <param name="path">path to the .object file</param>
         public void Analyze(string path)
         {
             try { customObject = XDocument.Load(path); }
