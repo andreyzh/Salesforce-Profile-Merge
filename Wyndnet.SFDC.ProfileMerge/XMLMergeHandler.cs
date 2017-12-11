@@ -81,11 +81,12 @@ namespace Wyndnet.SFDC.ProfileMerge
                     // Stage 1 - previous node found
                     if (previousNode != null)
                     {
-                        var node = previousNode.Single();
+                        // FIXME: single throws exception, something fishy here
+                        var node = previousNode.FirstOrDefault();
                         if (node != null)
                         {
                             // Insert after
-                            node.AddAfterSelf(addition.OriginElement);
+                            node.AddAfterSelf(addition.TargetElement);
                             // Remove our addition since we have processed it and continue
                             additions.Remove(addition);
                             continue;
@@ -101,11 +102,11 @@ namespace Wyndnet.SFDC.ProfileMerge
                     // Stage 2 - next node found
                     if (nextNode != null)
                     {
-                        var node = nextNode.Single();
+                        var node = nextNode.FirstOrDefault();
                         if (node != null)
                         {
                             // Insert before
-                            node.AddBeforeSelf(addition.OriginElement);
+                            node.AddBeforeSelf(addition.TargetElement);
                             // Remove our addition since we have processed it and continue
                             additions.Remove(addition);
                             continue;
@@ -113,7 +114,41 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
 
                     // Stage 3 - here things are starting to get complicated and we have to revert to the alphabetical sorting
+                    // !!!TODO: we might need to call this only after we're approaching endless loop - the program seems to handle most of the elements nicely so far!!!
+                    // TODO: this could use some caching of the element types already searched to improve performance
+                    List<string> nodeNames = new List<string>();
 
+                    var elements =
+                            from el in mergeDoc.Root.Elements(ns + addition.ElementType)
+                            select el;
+
+                    foreach(var element in elements)
+                    {
+                        string value = Config.ComponentDefinitions[addition.ElementType];
+
+                        var target =
+                            from el in element.Elements(ns + value)
+                            select el;
+
+                        nodeNames.Add(target.Single().Value);
+                    }
+
+                    // Now try getting previous one alphabetically
+                    string likelyPreviousNodeName = GetPreviousElementName(nodeNames, addition.Name);
+
+                    // Handle case where we found one
+                    if(likelyPreviousNodeName != null)
+                    {
+                        var likelyPreviousNode =
+                            from el in mergeDoc.Root.Elements(ns + addition.ElementType)
+                            where (string)el.Element(ns + Config.ComponentDefinitions[addition.ElementType]) == likelyPreviousNodeName
+                            select el;
+
+                        XElement node = likelyPreviousNode.Single();
+
+                        node.AddAfterSelf(addition);
+                        additions.Remove(addition);
+                    }
                 }
             }
         }
