@@ -174,12 +174,13 @@ namespace Wyndnet.SFDC.ProfileMerge
         // Merge button handler
         private void MergeButton_Click(object sender, RoutedEventArgs e)
         {
+            buttonMerge.IsEnabled = false;
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += MergeXml;
             worker.RunWorkerCompleted += MergeXmlCompleted;
             worker.ProgressChanged += MergeXmlProgressChanged;
-            progressBar.Visibility = Visibility.Visible;
+            progressBarControl.Visibility = Visibility.Visible;
 
             worker.RunWorkerAsync(); 
         }
@@ -194,8 +195,10 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void MergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            progressBar.Visibility = Visibility.Hidden;
-            MessageBox.Show("Merge Completed");
+            buttonMerge.IsEnabled = true;
+            progressBarControl.Visibility = Visibility.Hidden;
+            //progressBar.Visibility = Visibility.Hidden;
+            MessageBox.Show("Merge Completed","Completed");
         }
 
         void MergeXml(object sender, DoWorkEventArgs e)
@@ -207,7 +210,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBar.Value = e.ProgressPercentage;
+            //progressBar.Value = e.ProgressPercentage;
         }
 
 #region DataGrid UI Controls

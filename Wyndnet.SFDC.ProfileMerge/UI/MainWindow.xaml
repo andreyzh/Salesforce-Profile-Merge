@@ -21,7 +21,7 @@
             <Button Grid.Column="0" Name="LoadSourceXml" Content="Source File" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
             <Button Grid.Column="1" Name="LoadTargetXml" Content="Target File" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
             <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
-            <Button Grid.Column="3" Content="Save Merged" Margin="10" VerticalAlignment="Top" Width="75" Click="MergeButton_Click"/>
+            <Button x:Name="buttonMerge" Grid.Column="3" Content="Merge" Margin="10" VerticalAlignment="Top" Width="75" Click="MergeButton_Click" Panel.ZIndex="1"/>
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
@@ -61,6 +61,11 @@
                 <TextBox x:Name="textBlock_Remote" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
             </Border>
         </Grid>
-        <ProgressBar Minimum="0" Maximum="100" Visibility="Hidden" Name="progressBar" />
+        <Border x:Name="progressBarControl" BorderThickness = "2" BorderBrush = "Black" Grid.Row="1" Panel.ZIndex="1" Height="100" Width="600" Margin="10,0" Visibility="Hidden">
+            <StackPanel Background = "White">
+                <TextBlock HorizontalAlignment = "Center" Margin = "10" Text = "Indeterminate Progress Bar" />
+                <ProgressBar x:Name = "progressBar" Margin = "10" Height = "15"  IsIndeterminate = "True" />
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
