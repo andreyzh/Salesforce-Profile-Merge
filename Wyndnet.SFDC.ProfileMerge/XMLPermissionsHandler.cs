@@ -216,33 +216,6 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
                 }
             }
-
-
-            XmlWriterSettings settings = new XmlWriterSettings
-            {
-                Encoding = new UTF8Encoding(false),
-                Indent = true,
-                IndentChars = "    ",
-                NewLineChars = "\n"
-            };
-
-            using (var writer = XmlWriter.Create("merged.xml", settings))
-            {
-                mergeDoc.Save(writer);
-            }
         }
-
-        private void GetApplicationTypes()
-        {
-            List<string> values = new List<string>();
-
-            foreach (var type in local.Root.Elements())
-            {
-                values.Add(type.Name.LocalName.ToString());
-            }
-
-            var valuesDistinct = values.Distinct();
-        }
-
     }
 }
