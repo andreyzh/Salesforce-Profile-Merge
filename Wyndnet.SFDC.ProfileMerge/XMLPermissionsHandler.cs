@@ -12,15 +12,22 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     // Currently it's multi-purpose class meant to do everything related to XML analysis
     //TODO: Refactor
-    class XMLHandler
+    class XMLPermissionsHandler
     {
-        public Dictionary<string, string> ComponentDefinitions { get; set; }
         public DifferenceStore DiffStore { get; set; }
 
-        // FIXME: remove public property
-        public XDocument local { get; private set; }
-        public XDocument remote { get; private set; }
+        XDocument local;
+        XDocument remote;
         float mergeProgress;
+
+        public XMLPermissionsHandler()
+        {
+            if(XMLHandlerBase.Local != null && XMLHandlerBase.Remote != null)
+            {
+                local = XMLHandlerBase.Local;
+                remote = XMLHandlerBase.Remote;
+            }
+        }
 
         // Loads XMLs from a given path
         public void LoadXml(string path, Config.Source source)
@@ -44,7 +51,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             foreach (var element in local.Root.Elements())
             {
                 // Inner loop - see if the component name matches
-                foreach(var kvp in ComponentDefinitions)
+                foreach(var kvp in Config.ComponentDefinitions)
                 {
                     XElement searchResult;
 
@@ -100,7 +107,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             foreach (var element in remote.Root.Elements())
             {
                 // Inner loop - see if the component name matches
-                foreach (var kvp in ComponentDefinitions)
+                foreach (var kvp in Config.ComponentDefinitions)
                 {
                     // Get element type e.g. classAccesses
                     string premissionType = element.Name.LocalName;
@@ -138,8 +145,6 @@ namespace Wyndnet.SFDC.ProfileMerge
         // Merge marked changes
         public void Merge(DifferenceStore diffStore, string path, object sender)
         {
-            //XMLMerge xmlMerge = new XMLMerge();
-
             // We don't want anything to happen to originals
             XDocument mergeDoc = new XDocument(remote);
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();

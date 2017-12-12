@@ -61,7 +61,8 @@
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
-    <Compile Include="XMLHander.cs" />
+    <Compile Include="XMLPermissionsHandler.cs" />
+    <Compile Include="XMLHandlerBase.cs" />
     <Compile Include="XMLMergeHandler.cs" />
     <Compile Include="XMLObjectHandler.cs" />
     <Page Include="UI\MainWindow.xaml">

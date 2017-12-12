@@ -26,9 +26,9 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void ButtonProfileMergeLaunch_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow window = new MainWindow();
-            window.Show();
-            this.Close();
+            //MainWindow window = new MainWindow();
+            //window.Show();
+            //this.Close();
         }
     }
 }

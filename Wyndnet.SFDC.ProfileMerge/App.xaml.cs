@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Wyndnet.SFDC.ProfileMerge
 {
@@ -15,12 +9,22 @@ namespace Wyndnet.SFDC.ProfileMerge
     {
         private void ApplicationStart(object sender, StartupEventArgs e)
         {
-            // We're expecting 4 links to different file versions
-            if(e.Args.Length == 4)
+            // Comparison mode
+            if(e.Args.Length == 0 || e.Args == null)
+            {
+                MessageBox.Show("Starting in comparison mode is not supported in this version. Please use as merge tool.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Current.Shutdown();
+                return;
+                //MainWindow window = new MainWindow(false);
+                //window.Show();
+            }
+            // We're expecting 4 links to different file versions for merge mode
+            if (e.Args.Length == 4)
             { 
                 Config.SetPaths(e.Args[0], e.Args[1], e.Args[2], e.Args[3]);
+                Config.SetComponentDefinitions();
 
-                MainWindow window = new MainWindow();
+                MainWindow window = new MainWindow(true);
                 window.Show();
             }
             else

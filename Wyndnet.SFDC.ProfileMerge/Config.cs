@@ -24,7 +24,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         static Dictionary<string, string> componentDefinitions = new Dictionary<string, string>();
         static Dictionary<string, string> componentFolderMap = new Dictionary<string, string>();
 
-        public static Dictionary<string, string> LoadComponentDefinitions()
+        public static Dictionary<string, string> SetComponentDefinitions()
         {
             try
             {

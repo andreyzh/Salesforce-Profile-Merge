@@ -12,10 +12,21 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     class XMLMergeHandler
     {
-        public XDocument Local { get; set; }
-        public XDocument Remote { get; set; }
+        XDocument local { get; set; }
+        XDocument remote { get; set; }
 
-        float mergeProgress;
+        //float mergeProgress;
+
+        public XMLMergeHandler()
+        {
+            if (XMLHandlerBase.Local != null && XMLHandlerBase.Remote != null)
+            {
+                local = XMLHandlerBase.Local;
+                remote = XMLHandlerBase.Remote;
+            }
+
+            //ComponentDefinitions = XMLHandlerBase.ComponentDefinitions;
+        }
 
         public void Merge(DifferenceStore diffStore, string path, object sender)
         {
@@ -23,7 +34,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             //List<DifferenceStore.Difference> diffsToMerge = (List < DifferenceStore.Difference > )diffStore.Diffs.Where(d => d.Merge == true);
 
             // Make a copy of the LOCAL XML - we will be merging into that one
-            XDocument mergeDoc = new XDocument(Local);
+            XDocument mergeDoc = new XDocument(local);
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
 
             // STAGE 1 - Merge selected changes

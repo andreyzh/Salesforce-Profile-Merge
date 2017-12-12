@@ -15,29 +15,31 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     public partial class MainWindow : Window
     {
-        private XMLHandler xmlHandler = new XMLHandler();
+        private XMLPermissionsHandler xmlPermissionsHandler;
 
         private ICollectionView DiffView { get; set; }
         private DifferenceStore diffStore = new DifferenceStore();
         private ObservableCollection<Difference> diffs = new ObservableCollection<Difference>();        
         
-        public MainWindow()
+        public MainWindow(bool mergeMode)
         {
             InitializeComponent();
-            xmlHandler.ComponentDefinitions = Config.LoadComponentDefinitions();
-            xmlHandler.DiffStore = diffStore;
 
-            // Load XMLs in memory
-            xmlHandler.LoadXml(Config.Remote, Config.Source.REMOTE);
-            xmlHandler.LoadXml(Config.Local, Config.Source.LOCAL);
+            InitMergeMode();
+        }
+
+        private void InitMergeMode()
+        {
+            XMLHandlerBase.Init(Config.Local, Config.Remote);
+            xmlPermissionsHandler = new XMLPermissionsHandler();
+            xmlPermissionsHandler.DiffStore = diffStore;
 
             // Calculate the differences
-            xmlHandler.Analyze();
+            xmlPermissionsHandler.Analyze();
 
-            // TEMP: Deletions work
+            // Scan for deletions and valid additions
             MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
             InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
-
             scanner.Scan(diffStore);
             scanner1.Scan(diffStore);
 
@@ -186,9 +188,6 @@ namespace Wyndnet.SFDC.ProfileMerge
         private void MergeButton_Click1(object sender, RoutedEventArgs e)
         {
             XMLMergeHandler mergeHandler = new XMLMergeHandler();
-            // FIXME: refactor this access pornography
-            mergeHandler.Remote = xmlHandler.remote;
-            mergeHandler.Local = xmlHandler.local;
 
             mergeHandler.Merge(diffStore, "path", sender);
         }
@@ -201,7 +200,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         void MergeXml(object sender, DoWorkEventArgs e)
         {
-            xmlHandler.Merge(diffStore, Config.Merged, sender);
+            xmlPermissionsHandler.Merge(diffStore, Config.Merged, sender);
         }
 
         void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
