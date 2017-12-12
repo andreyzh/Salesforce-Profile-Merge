@@ -12,8 +12,8 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     class XMLMergeHandler
     {
-        XDocument local { get; set; }
-        XDocument remote { get; set; }
+        XDocument local; 
+        XDocument remote;
 
         //float mergeProgress;
 
@@ -35,6 +35,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             // Make a copy of the LOCAL XML - we will be merging into that one
             XDocument mergeDoc = new XDocument(local);
+            XDocument mergeDoc1 = new XDocument(local);
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
 
             // STAGE 1 - Merge selected changes
@@ -124,6 +125,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                         }
                     }
 
+                    
                     // Stage 3 - here things are starting to get complicated and we have to revert to the alphabetical sorting
                     // !!!TODO: we might need to call this only after we're approaching endless loop - the program seems to handle most of the elements nicely so far!!!
                     // TODO: this could use some caching of the element types already searched to improve performance
@@ -161,7 +163,11 @@ namespace Wyndnet.SFDC.ProfileMerge
                         additions.Remove(addition);
                     }
                 }
-            }
+            } // Document assembly ends here
+
+            // Save file
+            string pth = Config.Merged + ".bak";
+            XMLHandlerBase.WriteXml(mergeDoc, pth);
         }
 
         private string GetPreviousElementName(List<string> nodeNames, string additionName)
