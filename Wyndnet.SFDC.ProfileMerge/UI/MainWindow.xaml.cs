@@ -200,7 +200,9 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         void MergeXml(object sender, DoWorkEventArgs e)
         {
-            xmlPermissionsHandler.Merge(diffStore, Config.Merged, sender);
+            XMLMergeHandler mergeHandler = new XMLMergeHandler();
+            mergeHandler.Merge(diffStore, "path", sender);
+            //xmlPermissionsHandler.Merge(diffStore, Config.Merged, sender);
         }
 
         void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)

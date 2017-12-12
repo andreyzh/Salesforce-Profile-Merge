@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,8 +15,7 @@ namespace Wyndnet.SFDC.ProfileMerge
     {
         XDocument local; 
         XDocument remote;
-
-        //float mergeProgress;
+        float mergeProgress;
 
         public XMLMergeHandler()
         {
@@ -24,15 +24,10 @@ namespace Wyndnet.SFDC.ProfileMerge
                 local = XMLHandlerBase.Local;
                 remote = XMLHandlerBase.Remote;
             }
-
-            //ComponentDefinitions = XMLHandlerBase.ComponentDefinitions;
         }
 
         public void Merge(DifferenceStore diffStore, string path, object sender)
         {
-            // Make a list of diffs that we're going to work with - those marked for merge
-            //List<DifferenceStore.Difference> diffsToMerge = (List < DifferenceStore.Difference > )diffStore.Diffs.Where(d => d.Merge == true);
-
             // Make a copy of the LOCAL XML - we will be merging into that one
             XDocument mergeDoc = new XDocument(local);
             XDocument mergeDoc1 = new XDocument(local);
@@ -162,6 +157,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                         node.AddAfterSelf(addition.TargetElement);
                         additions.Remove(addition);
                     }
+
+                    mergeProgress = (1 - (additions.Count / additionsSum)) * 100;
+                    (sender as BackgroundWorker).ReportProgress((int)mergeProgress);
                 }
             } // Document assembly ends here
 
