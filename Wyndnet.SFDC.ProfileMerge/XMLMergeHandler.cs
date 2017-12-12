@@ -159,7 +159,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                         XElement node = likelyPreviousNode.Single();
 
-                        node.AddAfterSelf(addition);
+                        node.AddAfterSelf(addition.TargetElement);
                         additions.Remove(addition);
                     }
                 }
