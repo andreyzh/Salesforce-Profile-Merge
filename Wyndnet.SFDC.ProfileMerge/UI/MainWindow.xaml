@@ -61,9 +61,9 @@
                 <TextBox x:Name="textBlock_Remote" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
             </Border>
         </Grid>
-        <Border x:Name="progressBarControl" BorderThickness = "2" BorderBrush = "Black" Grid.Row="1" Panel.ZIndex="1" Height="100" Width="600" Margin="10,0" Visibility="Hidden">
+        <Border x:Name="progressBarControl" BorderThickness = "1" BorderBrush = "Black" Grid.Row="1" Panel.ZIndex="1" Height="100" Width="600" Margin="10,0" Visibility="Hidden">
             <StackPanel Background = "White">
-                <TextBlock HorizontalAlignment = "Center" Margin = "10" Text = "Indeterminate Progress Bar" />
+                <TextBlock x:Name="progressBarText" HorizontalAlignment = "Center" Margin = "10" Text = "Working... Please wait" />
                 <ProgressBar x:Name = "progressBar" Margin = "10" Height = "15"  IsIndeterminate = "True" />
             </StackPanel>
         </Border>

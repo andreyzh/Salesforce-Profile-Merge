@@ -34,24 +34,14 @@ namespace Wyndnet.SFDC.ProfileMerge
             xmlPermissionsHandler = new XMLPermissionsHandler();
             xmlPermissionsHandler.DiffStore = diffStore;
 
-            // Calculate the differences
-            xmlPermissionsHandler.Analyze();
-
-            // Scan for deletions and valid additions
-            MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
-            InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
-            scanner.Scan(diffStore);
-            scanner1.Scan(diffStore);
-
-            // Populate observable collection
-            foreach (Difference change in diffStore.Diffs)
-            {
-                diffs.Add(change);
-            }
-
-            DiffView = CollectionViewSource.GetDefaultView(diffs);
-            dataGrid.ItemsSource = DiffView;
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += AnalyzeDiffs;
+            worker.RunWorkerCompleted += AnalysisCompleted;
+            progressBarControl.Visibility = Visibility.Visible;
+            worker.RunWorkerAsync();
         }
+
+        
 
         /* Click handler to load source and target XML files
         private void LoadButton_Click(object sender, RoutedEventArgs e)
@@ -185,22 +175,35 @@ namespace Wyndnet.SFDC.ProfileMerge
             worker.RunWorkerAsync(); 
         }
 
-        // FIXME: Temporary merge handler
-        private void MergeButton_Click1(object sender, RoutedEventArgs e)
+#region Analysis Handler
+        private void AnalyzeDiffs(object sender, DoWorkEventArgs e)
         {
-            XMLMergeHandler mergeHandler = new XMLMergeHandler();
+            // Calculate the differences
+            xmlPermissionsHandler.Analyze();
 
-            mergeHandler.Merge(diffStore, "path", sender);
+            // Scan for deletions and valid additions
+            MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
+            InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
+            scanner.Scan(diffStore);
+            scanner1.Scan(diffStore);
         }
 
-        private void MergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void AnalysisCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            buttonMerge.IsEnabled = true;
+            // Populate observable collection
+            foreach (Difference change in diffStore.Diffs)
+            {
+                diffs.Add(change);
+            }
+
+            DiffView = CollectionViewSource.GetDefaultView(diffs);
+            dataGrid.ItemsSource = DiffView;
+
             progressBarControl.Visibility = Visibility.Hidden;
-            //progressBar.Visibility = Visibility.Hidden;
-            MessageBox.Show("Merge Completed","Completed");
         }
+        #endregion
 
+#region Merge Handler
         void MergeXml(object sender, DoWorkEventArgs e)
         {
             XMLMergeHandler mergeHandler = new XMLMergeHandler();
@@ -213,7 +216,16 @@ namespace Wyndnet.SFDC.ProfileMerge
             //progressBar.Value = e.ProgressPercentage;
         }
 
-#region DataGrid UI Controls
+        private void MergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            buttonMerge.IsEnabled = true;
+            progressBarControl.Visibility = Visibility.Hidden;
+            //progressBar.Visibility = Visibility.Hidden;
+            MessageBox.Show("Merge Completed", "Completed");
+        }
+#endregion
+
+        #region DataGrid UI Controls
         private void SelectAllCheckboxChecked(object sender, RoutedEventArgs e)
         {
             dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = true);
