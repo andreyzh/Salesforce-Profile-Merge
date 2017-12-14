@@ -60,7 +60,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 if (obj.Fields.Contains(change.FieldName) && change.ChangeSource == local)
                 {
                     change.Ignore = true;
-                    change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                    change.ChangeType = DifferenceStore.ChangeType.None;
                     change.Merge = false;
                 }
 
@@ -84,7 +84,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 else if (!obj.Fields.Contains(change.FieldName) && change.ChangeSource == remote)
                 {
                     change.Ignore = true;
-                    change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                    change.ChangeType = DifferenceStore.ChangeType.None;
                     change.Merge = false;
                 }
             }

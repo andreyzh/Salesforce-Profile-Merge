@@ -117,7 +117,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                     else if (!components.Contains(change.Name) && change.ChangeSource == remote)
                     {
                         change.Ignore = true;
-                        change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                        change.ChangeType = DifferenceStore.ChangeType.None;
                         change.Merge = false;
                     }
                 }
