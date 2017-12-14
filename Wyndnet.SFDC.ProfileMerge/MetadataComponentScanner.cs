@@ -87,10 +87,13 @@ namespace Wyndnet.SFDC.ProfileMerge
                     if (components.Contains(change.Name))
                         change.InRepository = true;
 
-                    // CASE 3
+                    /* CASE 3
+                    * This means it's defined in local file and present in repo, but was not added in remote. 
+                    * Valid local addition and should not even be considered as merge relevant */
                     if (components.Contains(change.Name) && change.ChangeSource == local)
                     {
-                        change.ChangeType = DifferenceStore.ChangeType.Deleted;
+                        change.Ignore = true;
+                        change.ChangeType = DifferenceStore.ChangeType.None;
                         change.Merge = false;
                     }
 
@@ -108,9 +111,12 @@ namespace Wyndnet.SFDC.ProfileMerge
                         change.Merge = true;
                     }
 
-                    // CASE 6
+                    /* CASE 6
+                     * This means that remote is referencing something that was deleted locally
+                     * Valid local deletion and should not be considered as merge relevant */
                     else if (!components.Contains(change.Name) && change.ChangeSource == remote)
                     {
+                        change.Ignore = true;
                         change.ChangeType = DifferenceStore.ChangeType.Deleted;
                         change.Merge = false;
                     }

@@ -45,6 +45,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             /// True if change needs to be merged
             /// </summary>
             public bool Merge { get; set; }
+            /// <summary>
+            /// Flag not to display change as irrelevant
+            /// </summary>
+            public bool Ignore { get; internal set; }
             public bool InRepository { get; set; }
             /// <summary>
             /// API Name of the element
@@ -80,6 +84,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             /// XML Change node of the remote version
             /// </summary>
             public XElement TargetElement { get; set; }
+            
 
             // Get the name of the component e.g. name of class or sObject
             private string GetComponentName()

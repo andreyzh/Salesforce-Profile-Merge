@@ -36,7 +36,6 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             XMLObjectHandler handler = new XMLObjectHandler();
 
-            // This part will be different
             foreach (string obj in objects)
             {
                 string path = Environment.CurrentDirectory + "\\src\\objects\\" + obj + ".object";
@@ -55,9 +54,12 @@ namespace Wyndnet.SFDC.ProfileMerge
                 if (obj.Fields.Contains(change.FieldName))
                     change.InRepository = true;
 
-                // CASE 3
+                /* CASE 3
+                * This means it's defined in local file and present in repo, but was not added in remote. 
+                * Valid addition and should not even be considered as change */
                 if (obj.Fields.Contains(change.FieldName) && change.ChangeSource == local)
                 {
+                    change.Ignore = true;
                     change.ChangeType = DifferenceStore.ChangeType.Deleted;
                     change.Merge = false;
                 }
@@ -76,13 +78,18 @@ namespace Wyndnet.SFDC.ProfileMerge
                     change.Merge = true;
                 }
 
-                // CASE 6
+                /* CASE 6
+                * This means that remote is referencing something that was deleted locally
+                * Valid local deletion and should not be considered as merge relevant */
                 else if (!obj.Fields.Contains(change.FieldName) && change.ChangeSource == remote)
                 {
+                    change.Ignore = true;
                     change.ChangeType = DifferenceStore.ChangeType.Deleted;
                     change.Merge = false;
                 }
             }
+
+            //diffStore.Diffs.re
 
             return diffStore;
         }
