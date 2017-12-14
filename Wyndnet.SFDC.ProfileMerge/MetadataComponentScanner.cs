@@ -82,6 +82,11 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                 if (components != null)
                 {
+                    // Mark as present for UI
+                    // Note: there's a simiar thing to be used in innerxmlComponentScanner
+                    if (components.Contains(change.Name))
+                        change.InRepository = true;
+
                     // CASE 3
                     if (components.Contains(change.Name) && change.ChangeSource == local)
                     {

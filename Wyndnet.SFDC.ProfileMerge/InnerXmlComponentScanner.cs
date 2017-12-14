@@ -51,8 +51,12 @@ namespace Wyndnet.SFDC.ProfileMerge
             {
                 var obj = handler.Objects.Find(o => o.Name == change.ParentObject);
 
+                // Mark as present for UI
+                if (obj.Fields.Contains(change.FieldName))
+                    change.InRepository = true;
+
                 // CASE 3
-                if(obj.Fields.Contains(change.FieldName) && change.ChangeSource == local)
+                if (obj.Fields.Contains(change.FieldName) && change.ChangeSource == local)
                 {
                     change.ChangeType = DifferenceStore.ChangeType.Deleted;
                     change.Merge = false;

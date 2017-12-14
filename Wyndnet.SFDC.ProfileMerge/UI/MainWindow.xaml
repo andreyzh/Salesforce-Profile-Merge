@@ -25,9 +25,9 @@
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MaxHeight="60" />
@@ -49,6 +49,7 @@
                     <DataGridTextColumn Header="Element type" Width="2*" Binding="{Binding ElementType}" IsReadOnly="True"></DataGridTextColumn>
                     <DataGridTextColumn Header="Element name" Width="4*" Binding="{Binding Name}" IsReadOnly="True"></DataGridTextColumn>
                     <DataGridTextColumn Header="Change type" Width="1*" Binding="{Binding ChangeType}" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridCheckBoxColumn Header="In repository" Width="1*" Binding="{Binding InRepository}" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
             <GridSplitter Grid.Column="0" Grid.Row="1" Width="5" Height="auto"/>

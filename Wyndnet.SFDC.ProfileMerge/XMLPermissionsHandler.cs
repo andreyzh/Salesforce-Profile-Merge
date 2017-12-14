@@ -18,7 +18,6 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         XDocument local;
         XDocument remote;
-        float mergeProgress;
 
         public XMLPermissionsHandler()
         {

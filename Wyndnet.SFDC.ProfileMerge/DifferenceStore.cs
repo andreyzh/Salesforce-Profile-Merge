@@ -45,6 +45,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             /// True if change needs to be merged
             /// </summary>
             public bool Merge { get; set; }
+            public bool InRepository { get; set; }
             /// <summary>
             /// API Name of the element
             /// </summary>
