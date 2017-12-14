@@ -37,6 +37,7 @@
             <Button Grid.Column="0" Grid.Row="0" x:Name="showAdditionsButton" Content="Additions" HorizontalAlignment="Left" Margin="90,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowAdditionsButton_Click"/>
             <Button Grid.Column="0" Grid.Row="0" x:Name="showDeletionsButton" Content="Deletions" HorizontalAlignment="Left" Margin="175,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowDeletionsButton_Click"/>
             <Button Grid.Column="0" Grid.Row="0" x:Name="showAllButton" Content="All" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowAllButton_Click"/>
+            <Button Grid.Column="0" Grid.Row="0" x:Name="showIgnored" Content="Ignored" HorizontalAlignment="Left" Margin="345,0,0,0" VerticalAlignment="Top" Width="75" Click="ShowIgnoredButton_Click"/>
             <DataGrid Grid.Column="0" Grid.Row="1" x:Name="dataGrid" AutoGenerateColumns="False" MinWidth="300" Margin="5,0,5,0" MouseDoubleClick="DataGrid_MouseDoubleClick" KeyDown="DataGrid_KeyDown">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Header="Merge" Width="1*" Binding="{Binding Merge}">

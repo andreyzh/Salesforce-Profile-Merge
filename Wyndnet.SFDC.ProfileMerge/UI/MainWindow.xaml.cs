@@ -41,8 +41,6 @@ namespace Wyndnet.SFDC.ProfileMerge
             worker.RunWorkerAsync();
         }
 
-        
-
         /* Click handler to load source and target XML files
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
@@ -128,6 +126,13 @@ namespace Wyndnet.SFDC.ProfileMerge
         private void ShowAllButton_Click(object sender, RoutedEventArgs e)
         {
             DiffView.Filter = null;
+            FilterIgnored();
+        }
+
+        // TOOD: Doesn't work
+        private void ShowIgnoredButton_Click(object sender, RoutedEventArgs e)
+        {
+            DiffView.Filter = null;
         }
 
         // Display side-by-side XML from source and taget (if present)
@@ -199,9 +204,20 @@ namespace Wyndnet.SFDC.ProfileMerge
             DiffView = CollectionViewSource.GetDefaultView(diffs);
             dataGrid.ItemsSource = DiffView;
 
+            FilterIgnored();
+
             progressBarControl.Visibility = Visibility.Hidden;
         }
         #endregion
+
+        private void FilterIgnored()
+        {
+            DiffView.Filter = new Predicate<object>(item =>
+            {
+                Difference change = item as Difference;
+                return change.Ignore == false;
+            });
+        }
 
 #region Merge Handler
         void MergeXml(object sender, DoWorkEventArgs e)
@@ -225,7 +241,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 #endregion
 
-        #region DataGrid UI Controls
+#region DataGrid UI Controls
         private void SelectAllCheckboxChecked(object sender, RoutedEventArgs e)
         {
             dataGrid.Items.OfType<Difference>().ToList().ForEach(x => x.Merge = true);
