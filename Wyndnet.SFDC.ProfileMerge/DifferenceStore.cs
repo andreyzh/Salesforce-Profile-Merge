@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -49,6 +50,9 @@ namespace Wyndnet.SFDC.ProfileMerge
             /// Flag not to display change as irrelevant
             /// </summary>
             public bool Ignore { get; internal set; }
+            /// <summary>
+            /// True if element is found in repository
+            /// </summary>
             public bool InRepository { get; set; }
             /// <summary>
             /// API Name of the element
@@ -84,7 +88,8 @@ namespace Wyndnet.SFDC.ProfileMerge
             /// XML Change node of the remote version
             /// </summary>
             public XElement TargetElement { get; set; }
-            
+
+            private bool merge;
 
             // Get the name of the component e.g. name of class or sObject
             private string GetComponentName()

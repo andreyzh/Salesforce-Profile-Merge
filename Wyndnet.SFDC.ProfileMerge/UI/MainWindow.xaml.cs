@@ -25,6 +25,8 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             InitializeComponent();
 
+            dataGrid.CellEditEnding += DataGrid_CellEditEnding;
+
             InitMergeMode();
         }
 
@@ -271,6 +273,33 @@ namespace Wyndnet.SFDC.ProfileMerge
                     DiffView.Refresh();
                 }
             }      
+        }
+
+        private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if(e.EditAction == DataGridEditAction.Commit)
+            {
+                if (e.Column is DataGridBoundColumn column)
+                {
+                    var bindingPath = (column.Binding as Binding).Path.Path;
+                    if (bindingPath == "Merge")
+                    {
+                        int rowIndex = e.Row.GetIndex();
+                        var el = e.EditingElement as CheckBox;
+
+                        if ((bool)el.IsChecked)
+                        {
+                            Difference ignoredChange = (Difference)dataGrid.SelectedItem;
+                            if(ignoredChange.Ignore)
+                            {
+                                ignoredChange.ChangeType = ChangeType.New;
+                                ignoredChange.Ignore = false;
+                            }
+                        }
+                        
+                    }
+                }
+            }
         }
     }
 #endregion
