@@ -58,10 +58,10 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Should get the root directory of the project when called from Git client
             string currentDir = Environment.CurrentDirectory;
 
-            Base = currentDir + Utils.ConvertUnixPathToWindows(basePath);
-            Local = currentDir + Utils.ConvertUnixPathToWindows(localPath);
-            Remote = currentDir + Utils.ConvertUnixPathToWindows(remotePath);
-            Merged = currentDir + Utils.ConvertUnixPathToWindows(mergedPath);
+            Base = currentDir + "\\" + Utils.ConvertUnixPathToWindows(basePath);
+            Local = currentDir + "\\" + Utils.ConvertUnixPathToWindows(localPath);
+            Remote = currentDir + "\\" + Utils.ConvertUnixPathToWindows(remotePath);
+            Merged = currentDir + "\\" + Utils.ConvertUnixPathToWindows(mergedPath);
         }
     }
 }
