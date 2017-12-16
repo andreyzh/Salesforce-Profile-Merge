@@ -44,7 +44,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 // Single() method already covers for cases when there would be more than one element
                 XElement replacementTargetElement = replacementTarget.Single();
 
-                replacementTargetElement.ReplaceWith(change.OriginElement);
+                replacementTargetElement.ReplaceWith(change.TargetElement);
             }
 
             // STAGE 2 - Remove elements marked for deletion
@@ -164,7 +164,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             } // Document assembly ends here
 
             // Save file
-            string pth = Config.Merged + ".bak";
+            string pth = Config.Merged + ".merged";
             XMLHandlerBase.WriteXml(mergeDoc, pth);
             // Wite log
             Utils.WriteMergeResultsReport(diffStore, Config.Merged);
