@@ -80,7 +80,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 output.Add(sb.ToString());
             }
 
-            using (StreamWriter sw = new StreamWriter(path + ".log", false))
+            using (StreamWriter sw = new StreamWriter(path + ".log.csv", false))
             {
                 foreach(var line in output)
                 {
