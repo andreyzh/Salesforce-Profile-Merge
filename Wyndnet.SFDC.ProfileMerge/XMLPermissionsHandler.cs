@@ -78,6 +78,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                             where (string)el.Element(ns + kvp.Value) == searchTerm
                             select el;
 
+                        // #267 Check if more than one return - this is typical for LayoutAssingments
+                        // Can't implement yet, TODO for future development
+                        if(target.Count() > 1) { }
                         // Check that we have unique return 
                         if (target.Count() == 1)
                         {
@@ -87,9 +90,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                             if (element.Value != searchResult.Value && permissionType != "layoutAssignments")
                                 // We've found an element in local and remote - add as change
                                 DiffStore.Add(element, searchResult, DifferenceStore.ChangeType.Changed);
-                            // For now we can only add new layout assignments
+                            // Note: I allow this for now because there is just ONE return
                             if(element.Value != searchResult.Value && permissionType == "layoutAssignments")
-                                DiffStore.Add(element, null, DifferenceStore.ChangeType.New);
+                                DiffStore.Add(element, null, DifferenceStore.ChangeType.Changed);
                         }
                         // If we have no return it means that the item is not present in remote XML and we mark it as new
                         if(target.Count() == 0)
