@@ -30,7 +30,6 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             // Make a copy of the LOCAL XML - we will be merging into that one
             XDocument mergeDoc = new XDocument(local);
-            XDocument mergeDoc1 = new XDocument(local);
             XNamespace ns = mergeDoc.Root.GetDefaultNamespace();
 
             // STAGE 1 - Merge selected changes
