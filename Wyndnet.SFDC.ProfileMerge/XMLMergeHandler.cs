@@ -166,6 +166,8 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Save file
             string pth = Config.Merged + ".bak";
             XMLHandlerBase.WriteXml(mergeDoc, pth);
+            // Wite log
+            Utils.WriteMergeResultsReport(diffStore, Config.Merged);
         }
 
         private string GetPreviousElementName(List<string> nodeNames, string additionName)
