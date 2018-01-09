@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +17,9 @@ namespace Wyndnet.SFDC.ProfileMerge
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool mergeMode;
+        private string sourcePath;
+        private string targetPath;
         private XMLPermissionsHandler xmlPermissionsHandler;
 
         private ICollectionView DiffView { get; set; }
@@ -23,11 +28,29 @@ namespace Wyndnet.SFDC.ProfileMerge
         
         public MainWindow(bool mergeMode)
         {
+            this.mergeMode = mergeMode;
+
             InitializeComponent();
 
             dataGrid.CellEditEnding += DataGrid_CellEditEnding;
 
-            InitMergeMode();
+            if (mergeMode)
+                InitMergeMode();
+            else
+                InitComparisonMode();
+        }
+
+        private void InitComparisonMode()
+        {
+            // Make sure buttons are enabled
+            ButtonLoadSourceXml.IsEnabled = true;
+            ButtonLoadTargetXml.IsEnabled = true;
+            ButtonAnalyze.IsEnabled = true;
+            LabelLocalSource.Content = "Target";
+            LabelRemoteSource.Content = "Source";
+
+            xmlPermissionsHandler = new XMLPermissionsHandler();
+            xmlPermissionsHandler.DiffStore = diffStore;
         }
 
         private void InitMergeMode()
@@ -43,8 +66,8 @@ namespace Wyndnet.SFDC.ProfileMerge
             worker.RunWorkerAsync();
         }
 
-        /* Click handler to load source and target XML files
-        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        // Click handler to load source and target XML files
+        private void ButtonLoad_Click(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             string name = button.Name;
@@ -52,33 +75,38 @@ namespace Wyndnet.SFDC.ProfileMerge
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if(openFileDialog.ShowDialog() == true)
             {
-                if(name == "LoadSourceXml")
-                    xmlHandler.LoadXml(openFileDialog.FileName, "source");
-                if (name == "LoadTargetXml")
-                    xmlHandler.LoadXml(openFileDialog.FileName, "target");
+                // Assuming here merge from REMOTE to LOCAL -> from Source to Target -> Right to Left
+                // So SOURCE = REMOTE, TARGET = LOCAL
+                if(name == "ButtonLoadTargetXml")
+                { 
+                    targetPath = openFileDialog.FileName;
+                    LabelLocalSource.Content = Path.GetFileName(targetPath);
+                }
+                if (name == "ButtonLoadSourceXml")
+                { 
+                    sourcePath = openFileDialog.FileName;
+                    LabelRemoteSource.Content = Path.GetFileName(sourcePath);
+                }
             }
-        }*/
+        }
 
-        /* Click handler to start analysis of differences
-        private void AnalyseButton_Click_(object sender, RoutedEventArgs e)
+        // Click handler to start analysis of differences
+        private void ButtonAnalyze_Click(object sender, RoutedEventArgs e)
         {
-            // Clear diffstore
             diffStore.Clear();
             diffs.Clear();
 
-            // Calculate the differences
-            xmlHandler.Analyze();
-            
-            // Populate observable collection
-            foreach(Difference change in diffStore.Diffs)
-            {
-                diffs.Add(change);
-            }
+            // Set paths
+            Config.SetPaths(sourcePath, targetPath);
+            XMLHandlerBase.Init(Config.Local, Config.Remote);
+            xmlPermissionsHandler.LoadXml();
 
-            DiffView = CollectionViewSource.GetDefaultView(diffs);
-            
-            dataGrid.ItemsSource = DiffView;
-        }*/
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += AnalyzeDiffs;
+            worker.RunWorkerCompleted += AnalysisCompleted;
+            progressBarControl.Visibility = Visibility.Visible;
+            worker.RunWorkerAsync();
+        }
 
         // Grid element selection handler - displays XML content of nodes
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -88,7 +116,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 if (sender is DataGrid grid && grid.SelectedItems != null && grid.SelectedItems.Count == 1)
                 {
                     DataGridRow dgr = grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem) as DataGridRow;
-                    if (dgr.Item is DifferenceStore.Difference obj)
+                    if (dgr.Item is Difference obj)
                         DisplayDifference(obj);
                 }
             }
@@ -168,10 +196,19 @@ namespace Wyndnet.SFDC.ProfileMerge
             */
         }
 
-        // Merge button handler
-        private void MergeButton_Click(object sender, RoutedEventArgs e)
+        private void FilterIgnored()
         {
-            buttonMerge.IsEnabled = false;
+            DiffView.Filter = new Predicate<object>(item =>
+            {
+                Difference change = item as Difference;
+                return change.Ignore == false;
+            });
+        }
+
+        // Merge button handler
+        private void ButtonMerge_Click(object sender, RoutedEventArgs e)
+        {
+            ButtonMerge.IsEnabled = false;
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += MergeXml;
@@ -188,11 +225,14 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Calculate the differences
             xmlPermissionsHandler.Analyze();
 
-            // Scan for deletions and valid additions
-            MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
-            InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
-            scanner.Scan(diffStore);
-            scanner1.Scan(diffStore);
+            // Scan for deletions and valid additions if we're in merge mode
+            if(mergeMode)
+            { 
+                MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
+                InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
+                scanner.Scan(diffStore);
+                scanner1.Scan(diffStore);
+            }
         }
 
         private void AnalysisCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -210,24 +250,15 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             progressBarControl.Visibility = Visibility.Hidden;
         }
-        #endregion
-
-        private void FilterIgnored()
-        {
-            DiffView.Filter = new Predicate<object>(item =>
-            {
-                Difference change = item as Difference;
-                return change.Ignore == false;
-            });
-        }
+        #endregion   
 
 #region Merge Handler
         void MergeXml(object sender, DoWorkEventArgs e)
         {
             XMLMergeHandler mergeHandler = new XMLMergeHandler();
             try
-            { 
-                mergeHandler.Merge(diffStore, "path", sender);
+            {
+                    mergeHandler.Merge(diffStore, null, sender);
             }
             catch(Exception ex)
             {
@@ -242,7 +273,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void MergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            buttonMerge.IsEnabled = true;
+            ButtonMerge.IsEnabled = true;
             progressBarControl.Visibility = Visibility.Hidden;
             //progressBar.Visibility = Visibility.Hidden;
             MessageBox.Show("Merge Completed", "Completed");

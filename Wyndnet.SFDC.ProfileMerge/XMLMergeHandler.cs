@@ -162,7 +162,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                 }
             } // Document assembly ends here
 
-            // Save file
+            // Save file - merge mode
             string pth = Config.Merged + ".merged";
             XMLHandlerBase.WriteXml(mergeDoc, pth);
             // Wite log

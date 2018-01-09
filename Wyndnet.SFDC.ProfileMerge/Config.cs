@@ -63,5 +63,12 @@ namespace Wyndnet.SFDC.ProfileMerge
             Remote = currentDir + "\\" + Utils.ConvertUnixPathToWindows(remotePath);
             Merged = currentDir + "\\" + Utils.ConvertUnixPathToWindows(mergedPath);
         }
+
+        public static void SetPaths(string sourcePath, string targetPath)
+        {
+            Local = targetPath;
+            Remote = sourcePath;
+            Merged = targetPath;
+        }
     }
 }

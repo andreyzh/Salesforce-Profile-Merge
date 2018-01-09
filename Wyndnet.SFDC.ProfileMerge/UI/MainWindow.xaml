@@ -18,10 +18,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="LoadSourceXml" Content="Source File" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
-            <Button Grid.Column="1" Name="LoadTargetXml" Content="Target File" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
-            <Button Grid.Column="2" Content="Analyze" Margin="10" VerticalAlignment="Top" IsEnabled="False"/>
-            <Button x:Name="buttonMerge" Grid.Column="3" Content="Merge" Margin="10" VerticalAlignment="Top" Width="75" Click="MergeButton_Click" Panel.ZIndex="1"/>
+            <Button Grid.Column="0" Name="ButtonLoadSourceXml" Content="Source File" Margin="5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonLoad_Click"/>
+            <Button Grid.Column="1" Name="ButtonLoadTargetXml" Content="Target File" Margin="5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonLoad_Click"/>
+            <Button Grid.Column="2" Name="ButtonAnalyze" Content="Analyze" Margin="5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonAnalyze_Click"/>
+            <Button x:Name="ButtonMerge" Grid.Column="3" Content="Merge" Margin="5" VerticalAlignment="Top" Width="75" Click="ButtonMerge_Click" Panel.ZIndex="1"/>
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
@@ -54,8 +54,8 @@
                 </DataGrid.Columns>
             </DataGrid>
             <GridSplitter Grid.Column="0" Grid.Row="1" Width="5" Height="auto"/>
-            <Label Grid.Column="1" Grid.Row="0" Content="Local Source" HorizontalAlignment="Center"/>
-            <Label Grid.Column="2" Grid.Row="0" Content="Remote Source" HorizontalAlignment="Center"/>
+            <Label Name="LabelLocalSource" Grid.Column="1" Grid.Row="0" Content="Local" HorizontalAlignment="Center"/>
+            <Label Name="LabelRemoteSource" Grid.Column="2" Grid.Row="0" Content="Remote" HorizontalAlignment="Center"/>
             <Border Grid.Column="1" Grid.Row="1" BorderThickness="1" BorderBrush="Black" Margin="0,5,0,0">
                 <TextBox x:Name="textBlock_Local" Background="Transparent" IsReadOnly="True" BorderThickness="0" VerticalAlignment="Top" MinWidth="300" Margin="5,0"/>
             </Border>

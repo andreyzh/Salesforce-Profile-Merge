@@ -37,6 +37,16 @@ namespace Wyndnet.SFDC.ProfileMerge
                 remote = XDocument.Load(path);
         }
 
+        // Load XMLs from Config - used in the comparison mode
+        public void LoadXml()
+        {
+            if (XMLHandlerBase.Local != null && XMLHandlerBase.Remote != null)
+            {
+                local = XMLHandlerBase.Local;
+                remote = XMLHandlerBase.Remote;
+            }
+        }
+
         // Analyse differences between the input files, add to diff holder as new or changed
         public void Analyze()
         {

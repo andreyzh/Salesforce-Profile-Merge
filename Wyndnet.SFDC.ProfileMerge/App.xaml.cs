@@ -9,20 +9,19 @@ namespace Wyndnet.SFDC.ProfileMerge
     {
         private void ApplicationStart(object sender, StartupEventArgs e)
         {
+            Config.SetComponentDefinitions();
+
             // Comparison mode
-            if(e.Args.Length == 0 || e.Args == null)
+            if (e.Args.Length == 0 || e.Args == null)
             {
-                MessageBox.Show("Starting in comparison mode is not supported in this version. Please use as merge tool.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Current.Shutdown();
+                MainWindow window = new MainWindow(false);
+                window.Show();
                 return;
-                //MainWindow window = new MainWindow(false);
-                //window.Show();
             }
             // We're expecting 4 links to different file versions for merge mode
             if (e.Args.Length == 4)
             { 
                 Config.SetPaths(e.Args[0], e.Args[1], e.Args[2], e.Args[3]);
-                Config.SetComponentDefinitions();
 
                 MainWindow window = new MainWindow(true);
                 window.Show();
@@ -43,3 +42,5 @@ namespace Wyndnet.SFDC.ProfileMerge
 
 //This works from command line: 
 // C:/Users/Andreyzh/Documents/visual\ studio\ 2017/Projects/Wyndnet.SFDC.ProfileMerge/Wyndnet.SFDC.ProfileMerge/bin/Debug/Wyndnet.SFDC.ProfileMerge.exe
+
+// Debug params: "Admin_BASE_12004.profile" "Admin_LOCAL_12004.profile" "Admin_REMOTE_12004.profile"  "Admin.profile"
