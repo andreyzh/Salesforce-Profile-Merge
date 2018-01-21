@@ -115,6 +115,28 @@ namespace Wyndnet.SFDC.ProfileMerge
             asyncController.Completed += AsyncJobCompleted;
         }
 
+        // Merge button handler
+        private void ButtonMerge_Click(object sender, RoutedEventArgs e)
+        {
+            ButtonMerge.IsEnabled = false;
+
+            progressBarControl.Visibility = Visibility.Visible;
+
+            // Run async jobs handler
+            asyncController.RunMerge();
+            asyncController.Completed += AsyncJobCompleted;
+
+            /*
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += MergeXml;
+            worker.RunWorkerCompleted += MergeXmlCompleted;
+            worker.ProgressChanged += MergeXmlProgressChanged;
+            progressBarControl.Visibility = Visibility.Visible;
+
+            worker.RunWorkerAsync();*/
+        }
+
         // Grid element selection handler - displays XML content of nodes
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -212,20 +234,6 @@ namespace Wyndnet.SFDC.ProfileMerge
             });
         }
 
-        // Merge button handler
-        private void ButtonMerge_Click(object sender, RoutedEventArgs e)
-        {
-            ButtonMerge.IsEnabled = false;
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += MergeXml;
-            worker.RunWorkerCompleted += MergeXmlCompleted;
-            worker.ProgressChanged += MergeXmlProgressChanged;
-            progressBarControl.Visibility = Visibility.Visible;
-
-            worker.RunWorkerAsync(); 
-        }
-
 #region Analysis Handler
         private void AnalyzeDiffs(object sender, DoWorkEventArgs e)
         {
@@ -282,10 +290,13 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
                 case AsyncAction.Merge:
                     {
+                        ButtonMerge.IsEnabled = true;
+                        progressBarControl.Visibility = Visibility.Hidden;
+                        MessageBox.Show("Merge Completed", "Completed");
+
                         break;
                     }
             }
-            
 
             progressBarControl.Visibility = Visibility.Hidden;
         }
@@ -298,7 +309,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             XMLMergeHandler mergeHandler = new XMLMergeHandler();
             try
             {
-                    mergeHandler.Merge(diffStore, null, sender);
+                mergeHandler.Merge(diffStore, null);
             }
             catch(Exception ex)
             {

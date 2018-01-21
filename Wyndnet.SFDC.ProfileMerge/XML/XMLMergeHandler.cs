@@ -26,7 +26,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
         }
 
-        public void Merge(DifferenceStore diffStore, string path, object sender)
+        public void Merge(DifferenceStore diffStore, string path)
         {
             // Make a copy of the LOCAL XML - we will be merging into that one
             XDocument mergeDoc = new XDocument(local);
@@ -158,14 +158,14 @@ namespace Wyndnet.SFDC.ProfileMerge
                     }
 
                     mergeProgress = (1 - (additions.Count / additionsSum)) * 100;
-                    (sender as BackgroundWorker).ReportProgress((int)mergeProgress);
+                    //(sender as BackgroundWorker).ReportProgress((int)mergeProgress);
                 }
             } // Document assembly ends here
 
-            // Save file - merge mode
+            // Save file - merge mode TODO: needs refacoring, so that it's not invoked from here
             string pth = Config.Merged + ".merged";
             XMLHandlerBase.WriteXml(mergeDoc, pth);
-            // Wite log
+            // Wite log TODO: needs refacoring, so that it's not invoked from here
             Utils.WriteMergeResultsReport(diffStore, Config.Merged);
         }
 

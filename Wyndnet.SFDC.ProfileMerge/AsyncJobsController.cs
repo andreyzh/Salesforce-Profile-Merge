@@ -30,14 +30,19 @@ namespace Wyndnet.SFDC.ProfileMerge
             xmlPermissionsHandler.DiffStore = diffStore;
 
             BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += AnalyzeDiffs;
+            worker.DoWork += AnalyzeDiffsWork;
             worker.RunWorkerCompleted += WorkerRunCompleted;
             worker.RunWorkerAsync();
         }
 
-        public DifferenceStore RunMerge()
+        public void RunMerge()
         {
-            return diffStore;
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += MergeXmlWork;
+            worker.RunWorkerCompleted += WorkerRunCompleted;
+            worker.ProgressChanged += MergeXmlProgressChanged;
+            worker.RunWorkerAsync();
         }
 
         protected virtual void AsyncProcessingCompleted(AsyncJobCompletedEventArgs e)
@@ -45,9 +50,8 @@ namespace Wyndnet.SFDC.ProfileMerge
             // This replaces null check if eventHandler != null -> execute eventHandler
             Completed?.Invoke(this, e);
         }
-
         
-        private void AnalyzeDiffs(object sender, DoWorkEventArgs e)
+        private void AnalyzeDiffsWork(object sender, DoWorkEventArgs e)
         {
             // Calculate the differences
             xmlPermissionsHandler.Analyze();
@@ -62,22 +66,43 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
         }
 
+        void MergeXmlWork(object sender, DoWorkEventArgs e)
+        {
+            XMLMergeHandler mergeHandler = new XMLMergeHandler();
+            try
+            {
+                mergeHandler.Merge(diffStore, null);
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // This assembles the data for the return to the caller
         private void WorkerRunCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             AsyncJobCompletedEventArgs eventArgs = new AsyncJobCompletedEventArgs();
             eventArgs.DiffStore = diffStore;
             eventArgs.AsyncAction = AsyncAction.Analyse;
             AsyncProcessingCompleted(eventArgs);
+        }       
+
+        // Not in use
+        void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //progressBar.Value = e.ProgressPercentage;
         }
     }
 
     /// <summary>
-    /// ?
+    /// Holds data returned by async job
     /// </summary>
     class AsyncJobCompletedEventArgs : EventArgs
     {
         public DifferenceStore DiffStore { get; set; }
         public AsyncAction AsyncAction { get; set; }
+        public Exception Exception { get; set; }
     }
 
     enum AsyncAction { Analyse, Merge }
