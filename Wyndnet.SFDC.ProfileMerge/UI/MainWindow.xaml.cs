@@ -53,9 +53,6 @@ namespace Wyndnet.SFDC.ProfileMerge
             ButtonAnalyze.IsEnabled = true;
             LabelLocalSource.Content = "Target";
             LabelRemoteSource.Content = "Source";
-
-            //xmlPermissionsHandler = new XMLPermissionsHandler();
-            //xmlPermissionsHandler.DiffStore = diffStore;
         }
 
         private void InitMergeMode()
@@ -110,21 +107,12 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Set paths
             Config.SetPaths(sourcePath, targetPath);
             XMLHandlerBase.Init(Config.Local, Config.Remote);
-            // Initization of permissions handler must go after XMHandlerBase
-            //xmlPermissionsHandler = new XMLPermissionsHandler();
-            //xmlPermissionsHandler.DiffStore = diffStore;
 
-            // TEMP: Try out new class
             progressBarControl.Visibility = Visibility.Visible;
+
+            // Run async jobs handler
             asyncController.RunAnalyis();
             asyncController.Completed += AsyncJobCompleted;
-
-            /* TEMP: OUT
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += AnalyzeDiffs;
-            worker.RunWorkerCompleted += Completed;
-            progressBarControl.Visibility = Visibility.Visible;
-            worker.RunWorkerAsync(); */
         }
 
         // Grid element selection handler - displays XML content of nodes
@@ -272,18 +260,32 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void AsyncJobCompleted(object sender, AsyncJobCompletedEventArgs e)
         {
-            diffStore = e.DiffStore;
-
-            // Populate observable collection
-            foreach (Difference change in diffStore.Diffs)
+            // TODO: Make actions based on e.AsyncAction
+            switch(e.AsyncAction)
             {
-                diffs.Add(change);
+                case AsyncAction.Analyse:
+                    {
+                        diffStore = e.DiffStore;
+
+                        // Populate observable collection
+                        foreach (Difference change in diffStore.Diffs)
+                        {
+                            diffs.Add(change);
+                        }
+
+                        DiffView = CollectionViewSource.GetDefaultView(diffs);
+                        dataGrid.ItemsSource = DiffView;
+
+                        FilterIgnored();
+
+                        break;
+                    }
+                case AsyncAction.Merge:
+                    {
+                        break;
+                    }
             }
-
-            DiffView = CollectionViewSource.GetDefaultView(diffs);
-            dataGrid.ItemsSource = DiffView;
-
-            FilterIgnored();
+            
 
             progressBarControl.Visibility = Visibility.Hidden;
         }

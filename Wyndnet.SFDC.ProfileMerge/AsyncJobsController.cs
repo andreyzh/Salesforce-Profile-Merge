@@ -66,6 +66,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             AsyncJobCompletedEventArgs eventArgs = new AsyncJobCompletedEventArgs();
             eventArgs.DiffStore = diffStore;
+            eventArgs.AsyncAction = AsyncAction.Analyse;
             AsyncProcessingCompleted(eventArgs);
         }
     }
@@ -76,5 +77,8 @@ namespace Wyndnet.SFDC.ProfileMerge
     class AsyncJobCompletedEventArgs : EventArgs
     {
         public DifferenceStore DiffStore { get; set; }
+        public AsyncAction AsyncAction { get; set; }
     }
+
+    enum AsyncAction { Analyse, Merge }
 }
