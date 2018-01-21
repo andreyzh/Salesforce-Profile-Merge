@@ -58,20 +58,24 @@ namespace Wyndnet.SFDC.ProfileMerge
         private void InitMergeMode()
         {
             // Disable buttons not used in this mode
-            // Make sure buttons are enabled
             ButtonLoadSourceXml.IsEnabled = false;
             ButtonLoadTargetXml.IsEnabled = false;
             ButtonAnalyze.IsEnabled = false;
 
             XMLHandlerBase.Init(Config.Local, Config.Remote);
-            xmlPermissionsHandler = new XMLPermissionsHandler();
-            xmlPermissionsHandler.DiffStore = diffStore;
+            //xmlPermissionsHandler = new XMLPermissionsHandler();
+            //xmlPermissionsHandler.DiffStore = diffStore;
 
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += AnalyzeDiffs;
-            worker.RunWorkerCompleted += AnalysisCompleted;
             progressBarControl.Visibility = Visibility.Visible;
-            worker.RunWorkerAsync();
+            
+            // Run async jobs handler
+            asyncController.RunAnalyis();
+            asyncController.Completed += AsyncJobCompleted;
+
+            //BackgroundWorker worker = new BackgroundWorker();
+            //worker.DoWork += AnalyzeDiffs;
+            //worker.RunWorkerCompleted += AnalysisCompleted;
+            //worker.RunWorkerAsync();
         }
 
         // Click handler to load source and target XML files
