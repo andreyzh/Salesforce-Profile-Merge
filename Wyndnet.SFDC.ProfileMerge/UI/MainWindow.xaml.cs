@@ -22,6 +22,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         private string targetPath;
         private XMLPermissionsHandler xmlPermissionsHandler;
 
+        AsyncJobsController asyncController;
         private ICollectionView DiffView { get; set; }
         private DifferenceStore diffStore = new DifferenceStore();
         private ObservableCollection<Difference> diffs = new ObservableCollection<Difference>();        
@@ -32,7 +33,11 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             InitializeComponent();
 
+            // What does this do?
             dataGrid.CellEditEnding += DataGrid_CellEditEnding;
+
+            // Init async controller - this guy will take on analysis and merge actions
+            asyncController = new AsyncJobsController(diffStore, mergeMode);
 
             if (mergeMode)
                 InitMergeMode();
@@ -49,12 +54,18 @@ namespace Wyndnet.SFDC.ProfileMerge
             LabelLocalSource.Content = "Target";
             LabelRemoteSource.Content = "Source";
 
-            xmlPermissionsHandler = new XMLPermissionsHandler();
-            xmlPermissionsHandler.DiffStore = diffStore;
+            //xmlPermissionsHandler = new XMLPermissionsHandler();
+            //xmlPermissionsHandler.DiffStore = diffStore;
         }
 
         private void InitMergeMode()
         {
+            // Disable buttons not used in this mode
+            // Make sure buttons are enabled
+            ButtonLoadSourceXml.IsEnabled = false;
+            ButtonLoadTargetXml.IsEnabled = false;
+            ButtonAnalyze.IsEnabled = false;
+
             XMLHandlerBase.Init(Config.Local, Config.Remote);
             xmlPermissionsHandler = new XMLPermissionsHandler();
             xmlPermissionsHandler.DiffStore = diffStore;
@@ -99,13 +110,21 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Set paths
             Config.SetPaths(sourcePath, targetPath);
             XMLHandlerBase.Init(Config.Local, Config.Remote);
-            xmlPermissionsHandler.LoadXml();
+            // Initization of permissions handler must go after XMHandlerBase
+            //xmlPermissionsHandler = new XMLPermissionsHandler();
+            //xmlPermissionsHandler.DiffStore = diffStore;
 
+            // TEMP: Try out new class
+            progressBarControl.Visibility = Visibility.Visible;
+            asyncController.RunAnalyis();
+            asyncController.Completed += AsyncJobCompleted;
+
+            /* TEMP: OUT
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += AnalyzeDiffs;
-            worker.RunWorkerCompleted += AnalysisCompleted;
+            worker.RunWorkerCompleted += Completed;
             progressBarControl.Visibility = Visibility.Visible;
-            worker.RunWorkerAsync();
+            worker.RunWorkerAsync(); */
         }
 
         // Grid element selection handler - displays XML content of nodes
@@ -250,9 +269,28 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             progressBarControl.Visibility = Visibility.Hidden;
         }
-        #endregion   
 
-#region Merge Handler
+        private void AsyncJobCompleted(object sender, AsyncJobCompletedEventArgs e)
+        {
+            diffStore = e.DiffStore;
+
+            // Populate observable collection
+            foreach (Difference change in diffStore.Diffs)
+            {
+                diffs.Add(change);
+            }
+
+            DiffView = CollectionViewSource.GetDefaultView(diffs);
+            dataGrid.ItemsSource = DiffView;
+
+            FilterIgnored();
+
+            progressBarControl.Visibility = Visibility.Hidden;
+        }
+
+        #endregion
+
+        #region Merge Handler
         void MergeXml(object sender, DoWorkEventArgs e)
         {
             XMLMergeHandler mergeHandler = new XMLMergeHandler();
@@ -312,6 +350,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             }      
         }
 
+        // This does some strange thing, I cannot remember what anymore
         private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             if(e.EditAction == DataGridEditAction.Commit)
