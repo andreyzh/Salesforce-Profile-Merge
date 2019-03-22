@@ -157,6 +157,8 @@ namespace Wyndnet.SFDC.ProfileMerge
                         additions.Remove(addition);
                     }
 
+                    // TODO: We have a bug here. If we can't find anything, we end up in endless loop.
+
                     mergeProgress = (1 - (additions.Count / additionsSum)) * 100;
                     (sender as BackgroundWorker).ReportProgress((int)mergeProgress);
                 }
