@@ -22,6 +22,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         private string targetPath;
         private XMLPermissionsHandler xmlPermissionsHandler;
 
+        AsyncJobsController asyncController;
         private ICollectionView DiffView { get; set; }
         private DifferenceStore diffStore = new DifferenceStore();
         private ObservableCollection<Difference> diffs = new ObservableCollection<Difference>();        
@@ -32,7 +33,11 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             InitializeComponent();
 
+            // What does this do?
             dataGrid.CellEditEnding += DataGrid_CellEditEnding;
+
+            // Init async controller - this guy will take on analysis and merge actions
+            asyncController = new AsyncJobsController(diffStore, mergeMode);
 
             if (mergeMode)
                 InitMergeMode();
@@ -48,22 +53,29 @@ namespace Wyndnet.SFDC.ProfileMerge
             ButtonAnalyze.IsEnabled = true;
             LabelLocalSource.Content = "Target";
             LabelRemoteSource.Content = "Source";
-
-            xmlPermissionsHandler = new XMLPermissionsHandler();
-            xmlPermissionsHandler.DiffStore = diffStore;
         }
 
         private void InitMergeMode()
         {
-            XMLHandlerBase.Init(Config.Local, Config.Remote);
-            xmlPermissionsHandler = new XMLPermissionsHandler();
-            xmlPermissionsHandler.DiffStore = diffStore;
+            // Disable buttons not used in this mode
+            ButtonLoadSourceXml.IsEnabled = false;
+            ButtonLoadTargetXml.IsEnabled = false;
+            ButtonAnalyze.IsEnabled = false;
 
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += AnalyzeDiffs;
-            worker.RunWorkerCompleted += AnalysisCompleted;
+            XMLHandlerBase.Init(Config.Local, Config.Remote);
+            //xmlPermissionsHandler = new XMLPermissionsHandler();
+            //xmlPermissionsHandler.DiffStore = diffStore;
+
             progressBarControl.Visibility = Visibility.Visible;
-            worker.RunWorkerAsync();
+            
+            // Run async jobs handler
+            asyncController.RunAnalyis();
+            asyncController.Completed += AsyncJobCompleted;
+
+            //BackgroundWorker worker = new BackgroundWorker();
+            //worker.DoWork += AnalyzeDiffs;
+            //worker.RunWorkerCompleted += AnalysisCompleted;
+            //worker.RunWorkerAsync();
         }
 
         // Click handler to load source and target XML files
@@ -99,13 +111,34 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Set paths
             Config.SetPaths(sourcePath, targetPath);
             XMLHandlerBase.Init(Config.Local, Config.Remote);
-            xmlPermissionsHandler.LoadXml();
 
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork += AnalyzeDiffs;
-            worker.RunWorkerCompleted += AnalysisCompleted;
             progressBarControl.Visibility = Visibility.Visible;
-            worker.RunWorkerAsync();
+
+            // Run async jobs handler
+            asyncController.RunAnalyis();
+            asyncController.Completed += AsyncJobCompleted;
+        }
+
+        // Merge button handler
+        private void ButtonMerge_Click(object sender, RoutedEventArgs e)
+        {
+            ButtonMerge.IsEnabled = false;
+
+            progressBarControl.Visibility = Visibility.Visible;
+
+            // Run async jobs handler
+            asyncController.RunMerge();
+            asyncController.Completed += AsyncJobCompleted;
+
+            /*
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += MergeXml;
+            worker.RunWorkerCompleted += MergeXmlCompleted;
+            worker.ProgressChanged += MergeXmlProgressChanged;
+            progressBarControl.Visibility = Visibility.Visible;
+
+            worker.RunWorkerAsync();*/
         }
 
         // Grid element selection handler - displays XML content of nodes
@@ -205,20 +238,6 @@ namespace Wyndnet.SFDC.ProfileMerge
             });
         }
 
-        // Merge button handler
-        private void ButtonMerge_Click(object sender, RoutedEventArgs e)
-        {
-            ButtonMerge.IsEnabled = false;
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += MergeXml;
-            worker.RunWorkerCompleted += MergeXmlCompleted;
-            worker.ProgressChanged += MergeXmlProgressChanged;
-            progressBarControl.Visibility = Visibility.Visible;
-
-            worker.RunWorkerAsync(); 
-        }
-
 #region Analysis Handler
         private void AnalyzeDiffs(object sender, DoWorkEventArgs e)
         {
@@ -250,15 +269,51 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             progressBarControl.Visibility = Visibility.Hidden;
         }
-        #endregion   
 
-#region Merge Handler
+        private void AsyncJobCompleted(object sender, AsyncJobCompletedEventArgs e)
+        {
+            // TODO: Make actions based on e.AsyncAction
+            switch(e.AsyncAction)
+            {
+                case AsyncAction.Analyse:
+                    {
+                        diffStore = e.DiffStore;
+
+                        // Populate observable collection
+                        foreach (Difference change in diffStore.Diffs)
+                        {
+                            diffs.Add(change);
+                        }
+
+                        DiffView = CollectionViewSource.GetDefaultView(diffs);
+                        dataGrid.ItemsSource = DiffView;
+
+                        FilterIgnored();
+
+                        break;
+                    }
+                case AsyncAction.Merge:
+                    {
+                        ButtonMerge.IsEnabled = true;
+                        progressBarControl.Visibility = Visibility.Hidden;
+                        MessageBox.Show("Merge Completed", "Completed");
+
+                        break;
+                    }
+            }
+
+            progressBarControl.Visibility = Visibility.Hidden;
+        }
+
+        #endregion
+
+        #region Merge Handler
         void MergeXml(object sender, DoWorkEventArgs e)
         {
             XMLMergeHandler mergeHandler = new XMLMergeHandler();
             try
             {
-                    mergeHandler.Merge(diffStore, null, sender);
+                mergeHandler.Merge(diffStore, null);
             }
             catch(Exception ex)
             {
@@ -312,6 +367,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             }      
         }
 
+        // This does some strange thing, I cannot remember what anymore
         private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             if(e.EditAction == DataGridEditAction.Commit)

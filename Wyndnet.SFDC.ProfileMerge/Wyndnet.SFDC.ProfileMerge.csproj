@@ -54,14 +54,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="IComponentScaner.cs" />
-    <Compile Include="InnerXmlComponentScanner.cs" />
-    <Compile Include="MetadataComponentScanner.cs" />
+    <Compile Include="AsyncJobsController.cs" />
+    <Compile Include="Scanners\IComponentScaner.cs" />
+    <Compile Include="Scanners\InnerXmlComponentScanner.cs" />
+    <Compile Include="Scanners\MetadataComponentScanner.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="XMLPermissionsHandler.cs" />
-    <Compile Include="XMLHandlerBase.cs" />
-    <Compile Include="XMLMergeHandler.cs" />
-    <Compile Include="XMLObjectHandler.cs" />
+    <Compile Include="XML\XMLPermissionsHandler.cs" />
+    <Compile Include="XML\XMLHandlerBase.cs" />
+    <Compile Include="XML\XMLMergeHandler.cs" />
+    <Compile Include="XML\XMLObjectHandler.cs" />
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
