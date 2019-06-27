@@ -283,6 +283,14 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                         break;
                     }
+                case AsyncAction.Error:
+                    {
+                        ButtonMerge.IsEnabled = true;
+                        progressBarControl.Visibility = Visibility.Hidden;
+                        MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                        break;
+                    }
             }
 
             progressBarControl.Visibility = Visibility.Hidden;

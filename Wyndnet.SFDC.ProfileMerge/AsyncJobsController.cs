@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Wyndnet.SFDC.ProfileMerge
 {
@@ -66,26 +67,32 @@ namespace Wyndnet.SFDC.ProfileMerge
             }
         }
 
+        // 
         void MergeXmlWork(object sender, DoWorkEventArgs e)
         {
             XMLMergeHandler mergeHandler = new XMLMergeHandler();
-            try
-            {
-                mergeHandler.Merge(diffStore, null);
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
+            mergeHandler.Merge(diffStore, null);
         }
 
         // This assembles the data for the return to the caller
         private void WorkerRunCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             AsyncJobCompletedEventArgs eventArgs = new AsyncJobCompletedEventArgs();
-            eventArgs.DiffStore = diffStore;
-            eventArgs.AsyncAction = AsyncAction.Analyse;
-            AsyncProcessingCompleted(eventArgs);
+
+            if (e.Error != null)
+            {
+                eventArgs.AsyncAction = AsyncAction.Error;
+                eventArgs.Exception = e.Error;
+                AsyncProcessingCompleted(eventArgs);
+            }
+            else
+            { 
+                eventArgs.DiffStore = diffStore;
+                eventArgs.AsyncAction = AsyncAction.Analyse;
+                eventArgs.Exception = e.Error;
+                AsyncProcessingCompleted(eventArgs);
+            }
         }       
 
         // Not in use
@@ -105,5 +112,5 @@ namespace Wyndnet.SFDC.ProfileMerge
         public Exception Exception { get; set; }
     }
 
-    enum AsyncAction { Analyse, Merge }
+    enum AsyncAction { Analyse, Merge, Error }
 }
