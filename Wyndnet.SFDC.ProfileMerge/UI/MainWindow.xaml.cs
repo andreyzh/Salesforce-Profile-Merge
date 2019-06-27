@@ -255,8 +255,6 @@ namespace Wyndnet.SFDC.ProfileMerge
 
         private void AsyncJobCompleted(object sender, AsyncJobCompletedEventArgs e)
         {
-            // TODO: Make actions based on e.AsyncAction
-            // FIXME: Seems to be called twice
             switch(e.AsyncAction)
             {
                 case AsyncAction.Analyse:
@@ -274,6 +272,9 @@ namespace Wyndnet.SFDC.ProfileMerge
 
                         FilterIgnored();
 
+                        // Dispose of events
+                        asyncController.Completed -= AsyncJobCompleted;
+
                         break;
                     }
                 case AsyncAction.Merge:
@@ -281,6 +282,9 @@ namespace Wyndnet.SFDC.ProfileMerge
                         ButtonMerge.IsEnabled = true;
                         progressBarControl.Visibility = Visibility.Hidden;
                         MessageBox.Show("Merge Completed", "Completed");
+
+                        // Dispose of events
+                        asyncController.Completed -= AsyncJobCompleted;
 
                         break;
                     }
@@ -298,23 +302,6 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         #endregion
-
-        #region Merge Handler
-
-
-        void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            //progressBar.Value = e.ProgressPercentage;
-        }
-
-        private void MergeXmlCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            ButtonMerge.IsEnabled = true;
-            progressBarControl.Visibility = Visibility.Hidden;
-            //progressBar.Visibility = Visibility.Hidden;
-            MessageBox.Show("Merge Completed", "Completed");
-        }
-#endregion
 
 #region DataGrid UI Controls
         private void SelectAllCheckboxChecked(object sender, RoutedEventArgs e)
