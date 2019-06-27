@@ -63,19 +63,12 @@ namespace Wyndnet.SFDC.ProfileMerge
             ButtonAnalyze.IsEnabled = false;
 
             XMLHandlerBase.Init(Config.Local, Config.Remote);
-            //xmlPermissionsHandler = new XMLPermissionsHandler();
-            //xmlPermissionsHandler.DiffStore = diffStore;
 
             progressBarControl.Visibility = Visibility.Visible;
             
             // Run async jobs handler
             asyncController.RunAnalyis();
             asyncController.Completed += AsyncJobCompleted;
-
-            //BackgroundWorker worker = new BackgroundWorker();
-            //worker.DoWork += AnalyzeDiffs;
-            //worker.RunWorkerCompleted += AnalysisCompleted;
-            //worker.RunWorkerAsync();
         }
 
         // Click handler to load source and target XML files
@@ -129,16 +122,6 @@ namespace Wyndnet.SFDC.ProfileMerge
             // Run async jobs handler
             asyncController.RunMerge();
             asyncController.Completed += AsyncJobCompleted;
-
-            /*
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += MergeXml;
-            worker.RunWorkerCompleted += MergeXmlCompleted;
-            worker.ProgressChanged += MergeXmlProgressChanged;
-            progressBarControl.Visibility = Visibility.Visible;
-
-            worker.RunWorkerAsync();*/
         }
 
         // Grid element selection handler - displays XML content of nodes
@@ -308,18 +291,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         #endregion
 
         #region Merge Handler
-        void MergeXml(object sender, DoWorkEventArgs e)
-        {
-            XMLMergeHandler mergeHandler = new XMLMergeHandler();
-            try
-            {
-                mergeHandler.Merge(diffStore, null);
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+
 
         void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)
         {
