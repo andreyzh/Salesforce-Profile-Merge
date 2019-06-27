@@ -256,6 +256,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         private void AsyncJobCompleted(object sender, AsyncJobCompletedEventArgs e)
         {
             // TODO: Make actions based on e.AsyncAction
+            // FIXME: Seems to be called twice
             switch(e.AsyncAction)
             {
                 case AsyncAction.Analyse:

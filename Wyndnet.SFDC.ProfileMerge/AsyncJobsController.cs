@@ -32,7 +32,7 @@ namespace Wyndnet.SFDC.ProfileMerge
 
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += AnalyzeDiffsWork;
-            worker.RunWorkerCompleted += WorkerRunCompleted;
+            worker.RunWorkerCompleted += AnalyzeWorkerRunCompleted;
             worker.RunWorkerAsync();
         }
 
@@ -41,7 +41,7 @@ namespace Wyndnet.SFDC.ProfileMerge
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += MergeXmlWork;
-            worker.RunWorkerCompleted += WorkerRunCompleted;
+            worker.RunWorkerCompleted += MergeWorkerRunCompleted;
             worker.ProgressChanged += MergeXmlProgressChanged;
             worker.RunWorkerAsync();
         }
@@ -76,7 +76,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // This assembles the data for the return to the caller
-        private void WorkerRunCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void AnalyzeWorkerRunCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             AsyncJobCompletedEventArgs eventArgs = new AsyncJobCompletedEventArgs();
 
@@ -93,7 +93,27 @@ namespace Wyndnet.SFDC.ProfileMerge
                 eventArgs.Exception = e.Error;
                 AsyncProcessingCompleted(eventArgs);
             }
-        }       
+        }
+
+        // This assembles the data for the return to the caller
+        private void MergeWorkerRunCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            AsyncJobCompletedEventArgs eventArgs = new AsyncJobCompletedEventArgs();
+
+            if (e.Error != null)
+            {
+                eventArgs.AsyncAction = AsyncAction.Error;
+                eventArgs.Exception = e.Error;
+                AsyncProcessingCompleted(eventArgs);
+            }
+            else
+            {
+                eventArgs.DiffStore = diffStore;
+                eventArgs.AsyncAction = AsyncAction.Merge;
+                eventArgs.Exception = e.Error;
+                AsyncProcessingCompleted(eventArgs);
+            }
+        }
 
         // Not in use
         void MergeXmlProgressChanged(object sender, ProgressChangedEventArgs e)

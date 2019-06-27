@@ -81,7 +81,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                     // We're looking only at target element for now since addition is incoming from remote.
                     var previousNode =
                         from el in mergeDoc.Root.Elements()
-                        where XNode.DeepEquals(el, addition.TargetElement.PreviousNode)
+                        where (addition.TargetElement != null && XNode.DeepEquals(el, addition.TargetElement.PreviousNode))
                         select el;
 
                     // Stage 1 - previous node found
@@ -102,7 +102,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                     // No luck - previous known node was not found. Let's look for the next one
                     var nextNode =
                         from el in mergeDoc.Root.Elements()
-                        where XNode.DeepEquals(el, addition.TargetElement.NextNode)
+                        where (addition.TargetElement != null && XNode.DeepEquals(el, addition.TargetElement.NextNode))
                         select el;
 
                     // Stage 2 - next node found
@@ -154,6 +154,18 @@ namespace Wyndnet.SFDC.ProfileMerge
                         XElement node = likelyPreviousNode.Single();
 
                         node.AddAfterSelf(addition.TargetElement);
+                        additions.Remove(addition);
+                    }
+                    // Absolutely last resort - add as a first element of the parent 
+                    else
+                    {
+                        // Find parent fist node of the type
+                        var firstNodeOfType =
+                            from el in mergeDoc.Root.Elements(ns + addition.ElementType)
+                            select el.FirstNode.Parent;
+
+                        XNode node = firstNodeOfType.FirstOrDefault();
+                        node.AddBeforeSelf(addition.TargetElement);
                         additions.Remove(addition);
                     }
 
