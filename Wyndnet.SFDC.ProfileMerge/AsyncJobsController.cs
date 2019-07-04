@@ -12,7 +12,7 @@ namespace Wyndnet.SFDC.ProfileMerge
     {
         public EventHandler<AsyncJobCompletedEventArgs> Completed;
 
-        private bool mergeMode;
+        private readonly bool mergeMode;
         private DifferenceStore diffStore;
         private XMLPermissionsHandler xmlPermissionsHandler;
 
@@ -54,16 +54,21 @@ namespace Wyndnet.SFDC.ProfileMerge
         
         private void AnalyzeDiffsWork(object sender, DoWorkEventArgs e)
         {
-            // Calculate the differences
-            xmlPermissionsHandler.Analyze();
-
             // Scan for deletions and valid additions if we're in merge mode
             if (mergeMode)
             {
+                // Calculate the differences
+                xmlPermissionsHandler.Analyze();
+
                 MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
                 InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
                 scanner.Scan(diffStore);
                 scanner1.Scan(diffStore);
+            }
+            else
+            {
+                // Calculate the differences
+                xmlPermissionsHandler.Analyze();
             }
         }
 

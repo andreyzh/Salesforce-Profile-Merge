@@ -25,8 +25,8 @@ namespace Wyndnet.SFDC.ProfileMerge
         /// <summary>
         /// Initialize XMLs to compare in memory
         /// </summary>
-        /// <param name="localPath">Path to XML file</param>
-        /// <param name="remotePath">Path to XML file</param>
+        /// <param name="localPath">Path to XML file: Local for Merge Mode, Source in case of Compare Mode</param>
+        /// <param name="remotePath">Path to XML file: Remote for Merge Mode, Target in Compare Mode</param>
         public static void Init(string localPath, string remotePath)
         {
             if (localPath != null && remotePath != null)

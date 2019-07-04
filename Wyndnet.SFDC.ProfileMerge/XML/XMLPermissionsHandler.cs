@@ -21,35 +21,17 @@ namespace Wyndnet.SFDC.ProfileMerge
     {
         public DifferenceStore DiffStore { get; set; }
 
-        XDocument local;
-        XDocument remote;
+        // AKA "Source"
+        private XDocument local;
+        // AKA "Target"
+        private XDocument remote;
+
 
         public XMLPermissionsHandler()
         {
             if(XMLHandlerBase.Local != null && XMLHandlerBase.Remote != null)
             {
                 local = XMLHandlerBase.Local;
-                remote = XMLHandlerBase.Remote;
-            }
-        }
-
-        // Loads XMLs from a given path
-        public void LoadXml(string path, Config.Source source)
-        {
-            if(source == Config.Source.LOCAL)
-                local = XDocument.Load(path);
-            if (source == Config.Source.REMOTE)
-                remote = XDocument.Load(path);
-        }
-
-        // Load XMLs from Config - used in the comparison mode
-        public void LoadXml()
-        {
-            if (XMLHandlerBase.Local != null && XMLHandlerBase.Remote != null)
-            {
-                // Local is also known as source in compare mode
-                local = XMLHandlerBase.Local;
-                // Remote is also known as target in compare mode
                 remote = XMLHandlerBase.Remote;
             }
         }
@@ -111,17 +93,17 @@ namespace Wyndnet.SFDC.ProfileMerge
                             if(element.Value != searchResult.Value && permissionType == "layoutAssignments")
                                 DiffStore.Add(element, null, DifferenceStore.ChangeType.Changed);
                         }
-                        // If we have no return it means that the item is not present in remote XML and we mark it as new
+                        // If we have no return it means that the item is not present in remote or target file XML and we mark it as deleted
                         if(target.Count() == 0)
                         {
-                            DiffStore.Add(element, null, DifferenceStore.ChangeType.New);
+                            DiffStore.Add(element, null, DifferenceStore.ChangeType.Deleted);
                         }
                     }
                 }
             }
 
-            // Go though all elements, but this time scan remote
-            // We are now looking at remote file and checking if it doen't have something present in source
+            // Go though all elements, but this time scan remote/target
+            // We are now looking at remote/target file and checking if it doen't have something present in source
             //TODO: Refactor as subroutine because here we're mostly copy-pasting upper section
             foreach (var element in remote.Root.Elements())
             {
@@ -151,7 +133,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                             where (string)el.Element(ns + kvp.Value) == searchTerm
                             select el;
 
-                        // If we have no return it means that the item is not present in local XML, so we mark it as [s]new[/s] deleted
+                        // If we have no return it means that the item is not present in local/source XML, so we mark it as new
                         if (target.Count() == 0)
                         {
                             DiffStore.Add(null, element, DifferenceStore.ChangeType.New);
