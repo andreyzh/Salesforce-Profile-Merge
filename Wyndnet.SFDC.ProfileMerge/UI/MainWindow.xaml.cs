@@ -51,8 +51,8 @@ namespace Wyndnet.SFDC.ProfileMerge
             ButtonLoadSourceXml.IsEnabled = true;
             ButtonLoadTargetXml.IsEnabled = true;
             ButtonAnalyze.IsEnabled = true;
-            LabelLocalSource.Content = "Target";
-            LabelRemoteSource.Content = "Source";
+            LabelLocalSource.Content = "Source";
+            LabelRemoteTarget.Content = "Target";
         }
 
         private void InitMergeMode()
@@ -80,17 +80,15 @@ namespace Wyndnet.SFDC.ProfileMerge
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if(openFileDialog.ShowDialog() == true)
             {
-                // Assuming here merge from REMOTE to LOCAL -> from Source to Target -> Right to Left
-                // So SOURCE = REMOTE, TARGET = LOCAL
                 if(name == "ButtonLoadTargetXml")
                 { 
                     targetPath = openFileDialog.FileName;
-                    LabelLocalSource.Content = Path.GetFileName(targetPath);
+                    LabelLocalSource.Content = Path.GetFileName(sourcePath);
                 }
                 if (name == "ButtonLoadSourceXml")
                 { 
                     sourcePath = openFileDialog.FileName;
-                    LabelRemoteSource.Content = Path.GetFileName(sourcePath);
+                    LabelRemoteTarget.Content = Path.GetFileName(targetPath);
                 }
             }
         }
@@ -182,21 +180,37 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
         // Display side-by-side XML from source and taget (if present)
-        // TODO: Needs to be refactored
         private void DisplayDifference(DifferenceStore.Difference change)
         {
             // Clear blocks
-            textBlock_Local.Text = "";
-            textBlock_Remote.Text = "";
+            textBlock_Local_Source.Text = "";
+            textBlock_Remote_Target.Text = "";
 
-            if (change.OriginElement != null)
-                textBlock_Local.Text = change.OriginElement.ToString();
+            // We have slightly different handling of the text boxes names and labels depending if we're in merge mode or not
+            if(mergeMode)
+            {
+                if (change.OriginElement != null)
+                    textBlock_Local_Source.Text = change.OriginElement.ToString();
+                else
+                    textBlock_Local_Source.Text = "None";
+                if (change.TargetElement != null)
+                    textBlock_Remote_Target.Text = change.TargetElement.ToString();
+                else
+                    textBlock_Remote_Target.Text = "None";
+            }
+            // For now same code until I figure out how to work with it
             else
-                textBlock_Local.Text = "None";
-            if (change.TargetElement != null)
-                textBlock_Remote.Text = change.TargetElement.ToString();
-            else
-                textBlock_Remote.Text = "None";
+            {
+                // Need to consider if change is addition or deletion or change
+                if (change.OriginElement != null)
+                    textBlock_Remote_Target.Text = change.OriginElement.ToString();
+                else
+                    textBlock_Remote_Target.Text = "None";
+                if (change.TargetElement != null)
+                    textBlock_Local_Source.Text = change.TargetElement.ToString();
+                else
+                    textBlock_Local_Source.Text = "None";
+            }
 
             /*
             if(change.ChangeType != ChangeType.Deleted)
