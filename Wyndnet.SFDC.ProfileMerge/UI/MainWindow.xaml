@@ -11,17 +11,15 @@
             <RowDefinition Height="Auto" MaxHeight="60" />
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Top">
+        <Grid Grid.Row="0" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Name="ButtonLoadSourceXml" Content="Source File" Margin="5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonLoad_Click"/>
-            <Button Grid.Column="1" Name="ButtonLoadTargetXml" Content="Target File" Margin="5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonLoad_Click"/>
-            <Button Grid.Column="2" Name="ButtonAnalyze" Content="Analyze" Margin="5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonAnalyze_Click"/>
-            <Button x:Name="ButtonMerge" Grid.Column="3" Content="Merge" Margin="5" VerticalAlignment="Top" Width="75" Click="ButtonMerge_Click" Panel.ZIndex="1"/>
+            <Button Grid.Column="0" Name="ButtonLoadSourceXml" Content="Source File" Margin="5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonLoad_Click" HorizontalAlignment="Left"/>
+            <Button Grid.Column="0" Name="ButtonLoadTargetXml" Content="Target File" Margin="90,5,5,5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonLoad_Click" HorizontalAlignment="Left"/>
+            <Button Grid.Column="0" Name="ButtonAnalyze" Content="Analyze" Margin="175,5,5,5" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ButtonAnalyze_Click" HorizontalAlignment="Left"/>
+            <Button Grid.Column="0" x:Name="ButtonMerge"  Content="Merge" Margin="260,5,5,5" VerticalAlignment="Top" Width="75" Click="ButtonMerge_Click" Panel.ZIndex="1" HorizontalAlignment="Left"/>
         </Grid>
         <Grid Grid.Row="1" Margin="5" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
