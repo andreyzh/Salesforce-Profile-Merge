@@ -20,7 +20,6 @@ namespace Wyndnet.SFDC.ProfileMerge
         private bool mergeMode;
         private string sourcePath;
         private string targetPath;
-        private XMLPermissionsHandler xmlPermissionsHandler;
 
         AsyncJobsController asyncController;
         private ICollectionView DiffView { get; set; }
@@ -80,14 +79,14 @@ namespace Wyndnet.SFDC.ProfileMerge
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if(openFileDialog.ShowDialog() == true)
             {
-                if(name == "ButtonLoadTargetXml")
-                { 
-                    targetPath = openFileDialog.FileName;
-                    LabelLocalSource.Content = Path.GetFileName(sourcePath);
-                }
                 if (name == "ButtonLoadSourceXml")
                 { 
                     sourcePath = openFileDialog.FileName;
+                    LabelLocalSource.Content = Path.GetFileName(sourcePath);
+                }
+                if (name == "ButtonLoadTargetXml")
+                {
+                    targetPath = openFileDialog.FileName;
                     LabelRemoteTarget.Content = Path.GetFileName(targetPath);
                 }
             }
@@ -236,21 +235,7 @@ namespace Wyndnet.SFDC.ProfileMerge
         }
 
 #region Analysis Handler
-        private void AnalyzeDiffs(object sender, DoWorkEventArgs e)
-        {
-            // Calculate the differences
-            xmlPermissionsHandler.Analyze();
-
-            // Scan for deletions and valid additions if we're in merge mode
-            if(mergeMode)
-            { 
-                MetadataComponentScanner scanner = new MetadataComponentScanner(Environment.CurrentDirectory);
-                InnerXmlComponentScanner scanner1 = new InnerXmlComponentScanner(Environment.CurrentDirectory);
-                scanner.Scan(diffStore);
-                scanner1.Scan(diffStore);
-            }
-        }
-
+ 
         private void AnalysisCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // Populate observable collection
