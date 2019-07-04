@@ -8,10 +8,15 @@ using System.Xml.Linq;
 namespace Wyndnet.SFDC.ProfileMerge
 {
     /// <summary>
-    /// Orchestrate Operations on XML Files
+    /// This class will make an initial version of the DifferenceStore with the changes accros
+    /// two input files. 
     /// </summary>
     // Currently it's multi-purpose class meant to do everything related to XML analysis
-    //TODO: Refactor
+    /* TODO: Refactor
+     * Refactoring will mean of splitting the item to the Base class containing constructor, loadXML, etc and two handlers:
+     * One handler will be used to manage merge mode, another one for compare mode.
+     * The Analyse method will need to be abstract and implemeted by children
+     */
     class XMLPermissionsHandler
     {
         public DifferenceStore DiffStore { get; set; }
@@ -42,7 +47,9 @@ namespace Wyndnet.SFDC.ProfileMerge
         {
             if (XMLHandlerBase.Local != null && XMLHandlerBase.Remote != null)
             {
+                // Local is also known as source in compare mode
                 local = XMLHandlerBase.Local;
+                // Remote is also known as target in compare mode
                 remote = XMLHandlerBase.Remote;
             }
         }
@@ -144,7 +151,7 @@ namespace Wyndnet.SFDC.ProfileMerge
                             where (string)el.Element(ns + kvp.Value) == searchTerm
                             select el;
 
-                        // If we have no return it means that the item is not present in local XML, so we mark it as new
+                        // If we have no return it means that the item is not present in local XML, so we mark it as [s]new[/s] deleted
                         if (target.Count() == 0)
                         {
                             DiffStore.Add(null, element, DifferenceStore.ChangeType.New);
